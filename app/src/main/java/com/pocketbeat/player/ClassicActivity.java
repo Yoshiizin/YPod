@@ -105,7 +105,7 @@ public class ClassicActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         audioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
         registerReceiver(unplugReceiver,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
@@ -135,7 +135,8 @@ public class ClassicActivity extends Activity {
     private void render(){
         miniTitle=null;miniButton=null;mainPlay=null;timeAt=null;timeLeft=null;progress=null;coverImage=null;
         shuffleButton=null;repeatButton=null;
-        shell=column();shell.setBackgroundColor(0xfff8f8f8);setContentView(shell);
+        shell=column();shell.setBackgroundColor(0xfff8f8f8);
+        shell.setFocusableInTouchMode(true);shell.requestFocus();setContentView(shell);
         statusBar();
         if(screen==PLAYER){topBar("Reproduzindo", "Biblioteca", null, new View.OnClickListener(){
             public void onClick(View v){screen=playerBack==PLAYER?SONGS:playerBack;render();}
@@ -521,11 +522,11 @@ public class ClassicActivity extends Activity {
         TextView t=text(symbol,size,BLUE,true);t.setGravity(Gravity.CENTER);return t;
     }
     private void showPlayer(){
-        ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);body.addView(scroll,lp(-1,-1));
+        ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);body.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout page=column();page.setGravity(Gravity.CENTER_HORIZONTAL);padding(page,12,7);
         scroll.addView(page);
         int heightDp=(int)(getResources().getDisplayMetrics().heightPixels/getResources().getDisplayMetrics().density);
-        int coverSize=Math.max(90,Math.min(134,heightDp-175));
+        int coverSize=Math.max(82,Math.min(145,heightDp-242));
         coverImage=new ImageView(this);coverImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         coverImage.setBackgroundDrawable(bordered(0xfff5f5f5,0xffc5c6cb,6,0xffa5a5a5));
         LinearLayout.LayoutParams art=lp(coverSize,coverSize);art.gravity=Gravity.CENTER_HORIZONTAL;
@@ -570,7 +571,7 @@ public class ClassicActivity extends Activity {
         controls.addView(previous,new LinearLayout.LayoutParams(0,dp(46),1));
         controls.addView(play,new LinearLayout.LayoutParams(0,dp(46),1));
         controls.addView(forward,new LinearLayout.LayoutParams(0,dp(46),1));
-        page.addView(controls,lp(-1,46));
+        body.addView(controls,lp(-1,46));
         previous.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(-1,true);}});
         play.setOnClickListener(new View.OnClickListener(){public void onClick(View v){toggle();}});
         forward.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(1,true);}});
@@ -579,7 +580,7 @@ public class ClassicActivity extends Activity {
         repeatButton=action(repeat==0?"Repetir: OFF":repeat==1?"Repetir: TUDO":"Repetir: 1",11);
         options.addView(shuffleButton,new LinearLayout.LayoutParams(0,dp(35),1));
         options.addView(repeatButton,new LinearLayout.LayoutParams(0,dp(35),1));
-        page.addView(options,lp(-1,35));
+        body.addView(options,lp(-1,32));
         shuffleButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){
             shuffle=!shuffle;getPreferences(0).edit().putBoolean("shuffle",shuffle).commit();
             shuffleButton.setText(shuffle?"Misturar: ON":"Misturar: OFF");
@@ -589,7 +590,7 @@ public class ClassicActivity extends Activity {
             repeatButton.setText(repeat==0?"Repetir: OFF":repeat==1?"Repetir: TUDO":"Repetir: 1");
         }});
         if(playing!=null){
-            TextView add=action("＋  Adicionar à playlist",12);page.addView(add,lp(-1,32));
+            TextView add=action("＋  Adicionar à playlist",12);body.addView(add,lp(-1,28));
             add.setOnClickListener(new View.OnClickListener(){public void onClick(View v){choosePlaylist(current);}});
         }
     }

@@ -2,7 +2,7 @@ name: Build YPod APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, feature/ypod-os-2-personalizado, feature/ypod-music-classic-3]
+    branches: [main, feature/ypod-os-2-personalizado, feature/ypod-music-classic-3, feature/ypod-home-classic]
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -21,7 +21,7 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
+        run: gradle --no-daemon :app:assembleDebug :home:assembleDebug
       - name: Verify Android 2.3 manifest and launcher
         run: |
           APK="app/build/outputs/apk/debug/app-debug.apk"
@@ -30,7 +30,18 @@ jobs:
           grep -Fq "package: name='com.pocketbeat.ypodclassic'" /tmp/ypod-manifest.txt
           grep -Fq "sdkVersion:'10'" /tmp/ypod-manifest.txt
           grep -Fq "launchable-activity: name='com.pocketbeat.player.ClassicActivity'" /tmp/ypod-manifest.txt
+      - name: Verify YPod Home on Android 2.3
+        run: |
+          AAPT="${ANDROID_HOME}/build-tools/35.0.0/aapt"
+          "$AAPT" dump badging "home/build/outputs/apk/debug/home-debug.apk" | tee /tmp/ypod-home-manifest.txt
+          grep -Fq "package: name='com.pocketbeat.ypodhome'" /tmp/ypod-home-manifest.txt
+          grep -Fq "sdkVersion:'10'" /tmp/ypod-home-manifest.txt
+          grep -Fq "launchable-activity: name='com.pocketbeat.home.HomeActivity'" /tmp/ypod-home-manifest.txt
       - uses: actions/upload-artifact@v4
         with:
           name: YPod-Music-Classic-APK
           path: app/build/outputs/apk/debug/*.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YPod-Home-Classic-APK
+          path: home/build/outputs/apk/debug/*.apk

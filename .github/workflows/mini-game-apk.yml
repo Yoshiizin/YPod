@@ -1,0 +1,35 @@
+name: Build Y-Dino for Galaxy Y
+on:
+  push:
+    branches: [ypod-mini-game-galaxy-y]
+    paths:
+      - 'mini-game/**'
+      - '.github/workflows/mini-game-apk.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK tools
+        shell: bash
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER"
+          "$SDKMANAGER" --install "platforms;android-28" "build-tools;35.0.0"
+      - name: Build Android 2.3.6 APK
+        run: bash mini-game/build.sh
+      - name: Publish Y-Dino APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Y-Dino-Galaxy-Y-APK
+          path: mini-game/build/outputs/*.apk
+          if-no-files-found: error

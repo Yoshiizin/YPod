@@ -3,10 +3,10 @@ android {
     namespace 'com.pocketbeat.player'
     compileSdk 35
     defaultConfig {
-        applicationId 'com.pocketbeat.ypod2'
+        applicationId 'com.pocketbeat.ypodclassic'
         minSdk 10
-        targetSdk 28
-        versionCode 12
-        versionName '2.0.1-install-fix'
+        targetSdk 22
+        versionCode 30
+        versionName '3.0-classic'
     }
 }

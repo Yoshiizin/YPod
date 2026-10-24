@@ -18,10 +18,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Prepare Android SDK
-        uses: android-actions/setup-android@v3
       - name: Install Android platform and build tools
-        run: sdkmanager --install "platforms;android-28" "build-tools;35.0.0"
+        shell: bash
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
+          sdkmanager --install "platforms;android-28" "build-tools;35.0.0"
       - name: Build signed API-10 APK
         run: bash mini-home/build.sh
       - name: Upload installable APK

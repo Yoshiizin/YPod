@@ -2,7 +2,7 @@ name: Build YPod APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feature/ypod-os-2-personalizado]
 jobs:
   build:
     runs-on: ubuntu-24.04

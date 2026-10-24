@@ -6,7 +6,7 @@ BT="$SDK/build-tools/35.0.0"
 JAR="$SDK/platforms/android-28/android.jar"
 mkdir -p build/classes build/dex build/outputs
 rm -f build/unsigned.apk build/aligned.apk build/outputs/YPod-Y-Dino-Galaxy-Y.apk
-"$BT/aapt" package -f -M AndroidManifest.xml -I "$JAR" -F build/unsigned.apk
+"$BT/aapt" package -f -M AndroidManifest.xml -I "$JAR" -S res -F build/unsigned.apk
 javac --release 8 -cp "$JAR" -d build/classes src/main/java/com/ypod/ydino/GameActivity.java
 jar cf build/classes.jar -C build/classes .
 "$BT/d8" --release --min-api 10 --lib "$JAR" --output build/dex build/classes.jar

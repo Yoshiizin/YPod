@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0">
   <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10"/>
-  <application android:label="Y-Dino" android:allowBackup="false"
+  <application android:label="Y-Dino" android:allowBackup="false" android:icon="@drawable/icon"
       android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
     <activity android:name=".GameActivity" android:screenOrientation="portrait"
         android:exported="true">

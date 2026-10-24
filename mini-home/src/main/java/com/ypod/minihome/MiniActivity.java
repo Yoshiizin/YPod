@@ -49,14 +49,16 @@ public final class MiniActivity extends Activity {
   }
   @Override protected void onPause(){
     if(listening){unregisterReceiver(batteryReceiver);listening=false;}
+    if(home!=null)home.stopFrames();
     super.onPause();
   }
   @Override public void onBackPressed(){
-    if(home.drawer){home.drawer=false;home.invalidate();}
+    if(home.panelTarget!=0)home.setPanel(0);
+    else if(home.drawer)home.setDrawer(false);
   }
   @Override public boolean onCreateOptionsMenu(android.view.Menu m){
     m.add("Todos os aplicativos").setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener(){
-      public boolean onMenuItemClick(android.view.MenuItem i){home.drawer=true;home.invalidate();return true;}
+      public boolean onMenuItemClick(android.view.MenuItem i){home.setDrawer(true);return true;}
     });
     m.add("Configurar atalhos").setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener(){
       public boolean onMenuItemClick(android.view.MenuItem i){chooseTile();return true;}
@@ -79,7 +81,7 @@ public final class MiniActivity extends Activity {
   }
   private void chooseTile(){
     new AlertDialog.Builder(this).setTitle("Configurar atalho").setItems(labels,new DialogInterface.OnClickListener(){
-      public void onClick(DialogInterface d,int i){if(i<3)chooseApp(i);else {home.drawer=true;home.invalidate();}}
+      public void onClick(DialogInterface d,int i){if(i<3)chooseApp(i);else {home.setDrawer(true);}}
     }).show();
   }
   private void chooseApp(final int index){
@@ -105,7 +107,7 @@ public final class MiniActivity extends Activity {
     }catch(Exception e){Toast.makeText(this,"Erro ao abrir "+a.label,Toast.LENGTH_SHORT).show();}
   }
   private void shortcut(int index){
-    if(index==3){home.drawer=true;home.invalidate();return;}
+    if(index==3){home.setDrawer(true);return;}
     String bound=prefs.getString("t"+index,null);
     if(bound!=null)for(App a:apps)if(bound.equals(a.pkg+"/"+a.cls)){launch(a);return;}
     if(index==2){
@@ -120,8 +122,25 @@ public final class MiniActivity extends Activity {
     final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
     final RectF r=new RectF();
     final Handler h=new Handler();
-    boolean drawer=false,moved=false,longPress=false;
-    int downTile=-1;float startX,startY,lastY,scroll=0;
+    boolean drawer=false,moved=false,longPress=false,clockMode=false;
+    int panelTarget=0,panelDraw=0,downTile=-1;
+    float drawerProgress=0,panelProgress=0,clockProgress=0,shiftX=0,shiftY=0;
+    float startX,startY,lastY,scroll=0;
+    long lastFrame=0L;
+    final Runnable anim=new Runnable(){public void run(){invalidate();}};
+    void requestFrame(){h.removeCallbacks(anim);h.postDelayed(anim,32);}
+    void stopFrames(){h.removeCallbacks(anim);h.removeCallbacks(longTask);lastFrame=0;}
+    void setDrawer(boolean open){
+      drawer=open;if(open){panelTarget=0;scroll=0;}
+      lastFrame=SystemClock.uptimeMillis();invalidate();
+    }
+    void setPanel(int kind){
+      if(kind!=0){panelDraw=kind;drawer=false;}
+      panelTarget=kind;lastFrame=SystemClock.uptimeMillis();invalidate();
+    }
+    float tween(float a,float b,float factor){
+      float n=a+(b-a)*factor;return Math.abs(n-b)<.012f?b:n;
+    }
     final int BLUE=0xff0b43c5,WHITE=0xfff8f6f5,LIGHT=0xffbed8ff,DARK=0xff0a2872;
     final Runnable longTask=new Runnable(){
       public void run(){if(!drawer && !moved && downTile>=0 && downTile<3){longPress=true;chooseApp(downTile);}}
@@ -140,12 +159,33 @@ public final class MiniActivity extends Activity {
       paint(col);p.setTypeface(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);p.setTextSize(sz);c.drawText(s,x,y,p);
     }
     @Override protected void onDraw(Canvas real){
-      real.drawColor(BLUE);real.save();
-      real.scale(getWidth()/240f,getHeight()/320f);
-      if(drawer)drawApps(real);else drawHome(real);
+      long now=SystemClock.uptimeMillis();
+      float dt=lastFrame==0?16:Math.max(1,Math.min(42,now-lastFrame));
+      lastFrame=now;
+      float f=Math.min(.43f,dt/90f);
+      drawerProgress=tween(drawerProgress,drawer?1:0,f);
+      panelProgress=tween(panelProgress,panelTarget==0?0:1,f);
+      clockProgress=tween(clockProgress,clockMode?1:0,f);
+      shiftX=tween(shiftX,0,f*.7f);shiftY=tween(shiftY,0,f*.7f);
+      if(panelProgress==0&&panelTarget==0)panelDraw=0;
+      real.drawColor(BLUE);real.save();real.scale(getWidth()/240f,getHeight()/320f);
+      real.save();real.translate(-38*drawerProgress,0);drawHome(real);real.restore();
+      if(drawerProgress>0){
+        real.save();real.clipRect(240-240*drawerProgress,0,240,320);
+        real.translate(240-240*drawerProgress,0);drawApps(real);real.restore();
+      }
+      if(panelProgress>0&&panelDraw!=0)drawPanel(real);
       real.restore();
+      if(Math.abs(drawerProgress-(drawer?1:0))>.012f ||
+         Math.abs(panelProgress-(panelTarget==0?0:1))>.012f ||
+         Math.abs(clockProgress-(clockMode?1:0))>.012f ||
+         Math.abs(shiftX)>.08f||Math.abs(shiftY)>.08f)requestFrame();
     }
 
+    void alphaText(Canvas c,String s,float x,float y,float sz,int color,boolean bold,int alpha){
+      paint(color);p.setTypeface(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);
+      p.setTextSize(sz);p.setAlpha(alpha);c.drawText(s,x,y,p);p.setAlpha(255);
+    }
     void outline(Canvas c,float x,float y,float rad,int col,float thickness){
       paint(col);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(thickness);
       c.drawCircle(x,y,rad,p);p.setStyle(Paint.Style.FILL);
@@ -197,6 +237,13 @@ public final class MiniActivity extends Activity {
       round(c,175,21,48,18,9,0xffe4484a);
       word(c,":)",190,34,11,WHITE,true);
       word(c,"Welcome",112,61,23,WHITE,true);
+      if(clockProgress>.02f){
+        int a=(int)(255*clockProgress);
+        paint(BLUE);p.setAlpha(a);c.drawRect(106,13,240,69,p);p.setAlpha(255);
+        alphaText(c,new SimpleDateFormat("HH:mm",Locale.getDefault()).format(new Date()),
+          115,44,30,WHITE,true,a);
+        alphaText(c,"HELLO TODAY",129,59,8,LIGHT,true,a);
+      }
       String date=new SimpleDateFormat("EEE, d MMM",Locale.ENGLISH).format(new Date());
       word(c,date+"   /   "+(battery<0?"--":battery)+"%",18,83,8,WHITE,false);
       line(c,17,90,224,90,0xff729be3,0.65f);
@@ -207,6 +254,7 @@ public final class MiniActivity extends Activity {
         word(c,labels[i],46,y,10,WHITE,i==0);
       }
 
+      c.save();c.translate(shiftX,shiftY);
       // Carefully layered 2D objects to match the original 240x320 preview.
       poly(c,0xff03194d,30,278,209,272,239,289,54,297);
       poly(c,0xff143075,42,283,208,282,217,286,55,292);
@@ -256,11 +304,62 @@ public final class MiniActivity extends Activity {
       poly(c,0xff12398a,66,227,70,227,68,230);
       round(c,98,289,10,3,2,0xffead9cb);
       circle(c,109,289,2.1f,0xffef4e5c);
+      c.restore();
       round(c,107,293,26,24,12,0xff1e5aca);
       paint(LIGHT);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.2f);
       r.set(115,300,125,309);c.drawRoundRect(r,1,1,p);
       p.setStyle(Paint.Style.FILL);
       word(c,"APPS",136,307,6.5f,LIGHT,true);
+    }
+    void drawPanel(Canvas c){
+      paint(DARK);p.setAlpha((int)(120*panelProgress));
+      c.drawRect(0,0,240,320,p);p.setAlpha(255);
+      c.save();c.translate(0,(1-panelProgress)*180);
+      round(c,22,98,196,171,13,WHITE);
+      round(c,96,104,48,3,2,0xffd9e3f6);
+      word(c,panelDraw==1?"BATTERY":"MINI CONTROLS",36,125,12,DARK,true);
+      round(c,188,108,20,19,7,0xffe6ecf7);
+      word(c,"x",195,122,11,DARK,true);
+      if(panelDraw==1){
+        word(c,(battery<0?"--":battery)+"%",36,161,31,DARK,true);
+        word(c,"Current battery level",38,176,8,0xff6075a0,false);
+        float level=battery<0?0f:battery/100f;
+        for(int i=0;i<7;i++)
+          round(c,39+i*22,191,16,37,2,(i+1)/7f<=level?0xff2664d3:0xffd9e3f6);
+        word(c,"LIVE LEVEL - NOT HISTORY",39,243,7,0xff6075a0,true);
+        word(c,"Tap outside to close",39,256,7,0xff6075a0,false);
+      }else{
+        panelRow(c,145,"Wi-Fi settings",0);
+        panelRow(c,178,"Bluetooth",1);
+        panelRow(c,211,"System settings",2);
+        word(c,"Opens Android settings",39,253,7,0xff6075a0,false);
+      }
+      c.restore();
+    }
+    void panelRow(Canvas c,int y,String label,int n){
+      round(c,38,y,166,27,6,0xffedf3fd);
+      round(c,44,y+5,17,17,4,0xff2869ce);
+      if(n==0){
+        line(c,48,y+14,52,y+9,WHITE,1.5f);
+        line(c,52,y+9,57,y+14,WHITE,1.5f);
+        circle(c,52,y+17,2,WHITE);
+      }else if(n==1){
+        line(c,52,y+8,52,y+19,WHITE,1.3f);
+        line(c,49,y+10,56,y+17,WHITE,1.3f);
+        line(c,49,y+17,56,y+10,WHITE,1.3f);
+      }else{
+        outline(c,52,y+14,5,WHITE,1.3f);circle(c,52,y+14,2,WHITE);
+      }
+      word(c,label,72,y+18,10,DARK,true);
+    }
+    void openPanelSetting(int n){
+      try{
+        String action=n==0?Settings.ACTION_WIFI_SETTINGS:
+          n==1?Settings.ACTION_BLUETOOTH_SETTINGS:Settings.ACTION_SETTINGS;
+        startActivity(new Intent(action));
+      }catch(Exception e){
+        Toast.makeText(MiniActivity.this,"Ajuste indisponivel",Toast.LENGTH_SHORT).show();
+      }
     }
     void drawApps(Canvas c){
       box(c,0,0,240,320,DARK);
@@ -292,25 +391,63 @@ public final class MiniActivity extends Activity {
       switch(ev.getAction()){
         case MotionEvent.ACTION_DOWN:
           startX=x;startY=y;lastY=y;moved=false;longPress=false;
-          downTile=drawer?-1:tile(x,y);
+          downTile=(drawer||panelTarget!=0)?-1:tile(x,y);
           if(downTile>=0&&downTile<3)h.postDelayed(longTask,650);
           return true;
         case MotionEvent.ACTION_MOVE:
-          if(Math.abs(x-startX)>7||Math.abs(y-startY)>7){moved=true;h.removeCallbacks(longTask);}
-          if(drawer&&moved){scroll=bound(scroll+lastY-y);invalidate();}
+          if(Math.abs(x-startX)>8||Math.abs(y-startY)>8){
+            moved=true;h.removeCallbacks(longTask);
+          }
+          if(!drawer&&panelTarget==0&&moved){
+            shiftX=Math.max(-6,Math.min(6,(x-startX)*.07f));
+            shiftY=Math.max(-4,Math.min(4,(y-startY)*.05f));
+            invalidate();
+          }
+          if(drawer&&moved&&Math.abs(y-startY)>Math.abs(x-startX)){
+            scroll=bound(scroll+lastY-y);invalidate();
+          }
           lastY=y;return true;
-        case MotionEvent.ACTION_CANCEL:h.removeCallbacks(longTask);return true;
+        case MotionEvent.ACTION_CANCEL:
+          h.removeCallbacks(longTask);requestFrame();return true;
         case MotionEvent.ACTION_UP:
           h.removeCallbacks(longTask);
-          if(moved||longPress)return true;
+          shiftX*=.7f;shiftY*=.7f;requestFrame();
+          if(longPress)return true;
+          float dx=x-startX,dy=y-startY;
+          if(moved){
+            if(panelTarget!=0){
+              if(Math.abs(dy)>35)setPanel(0);
+            }else if(drawer){
+              if(dx>37&&Math.abs(dx)>Math.abs(dy)*1.1f)setDrawer(false);
+            }else{
+              if((dx< -34&&Math.abs(dx)>Math.abs(dy))||dy< -48)setDrawer(true);
+              else if(dy>46)setPanel(2);
+            }
+            return true;
+          }
+          if(panelTarget!=0){
+            if(x<22||x>218||y<98||y>269||(x>185&&y<136)){
+              setPanel(0);return true;
+            }
+            if(panelTarget==2){
+              if(y>=145&&y<178)openPanelSetting(0);
+              else if(y>=178&&y<211)openPanelSetting(1);
+              else if(y>=211&&y<241)openPanelSetting(2);
+            }
+            return true;
+          }
           if(drawer){
-            if(y<55&&x>181){drawer=false;invalidate();return true;}
+            if(y<55&&x>181){setDrawer(false);return true;}
             int idx=(int)((y-65+scroll)/33);
-            if(y>=60 && idx>=0 && idx<apps.size())launch(apps.get(idx));
+            if(y>=60&&idx>=0&&idx<apps.size())launch(apps.get(idx));
           }else{
             int ix=tile(x,y);
-            if(ix>=0&&ix==downTile)shortcut(ix);
-            else if(y>=290){drawer=true;scroll=0;invalidate();}
+            if(ix>=0&&ix==downTile){shortcut(ix);return true;}
+            if(y>=290){setDrawer(true);return true;}
+            if(y>=68&&y<95){setPanel(1);return true;}
+            if(y<68&&x>=175){setPanel(2);return true;}
+            if(y<68&&x>105){clockMode=!clockMode;invalidate();return true;}
+            if(y>210&&y<289){setPanel(1);return true;}
           }
           return true;
       }

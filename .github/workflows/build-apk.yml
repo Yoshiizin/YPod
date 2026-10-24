@@ -22,7 +22,15 @@ jobs:
           gradle-version: '8.9'
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
+      - name: Verify Android 2.3 manifest and launcher
+        run: |
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          AAPT="${ANDROID_HOME}/build-tools/35.0.0/aapt"
+          "$AAPT" dump badging "$APK" | tee /tmp/ypod-manifest.txt
+          grep -Fq "package: name='com.pocketbeat.ypodclassic'" /tmp/ypod-manifest.txt
+          grep -Fq "sdkVersion:'10'" /tmp/ypod-manifest.txt
+          grep -Fq "launchable-activity: name='com.pocketbeat.player.ClassicActivity'" /tmp/ypod-manifest.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: YPod-APK
+          name: YPod-Music-Classic-APK
           path: app/build/outputs/apk/debug/*.apk

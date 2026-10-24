@@ -1,0 +1,44 @@
+name: Build Mini Home Galaxy Y
+
+on:
+  push:
+    branches: [main, ypod-mini-home-galaxy-y]
+    paths:
+      - 'mini-home/**'
+      - '.github/workflows/mini-home-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android platform and build tools
+        shell: bash
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER"
+          "$SDKMANAGER" --install "platforms;android-28" "build-tools;35.0.0"
+      - name: Build signed Android 2.3 APK
+        run: bash mini-home/build.sh
+      - name: Verify APK package and minimum SDK
+        shell: bash
+        run: |
+          APK="mini-home/build/outputs/YPod-Mini-Home-Galaxy-Y.apk"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | tee /tmp/mini-home-badging.txt
+          grep -Fq "package: name='com.ypod.minihome.clockfix'" /tmp/mini-home-badging.txt
+          grep -Fq "sdkVersion:'10'" /tmp/mini-home-badging.txt
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: YPod-Mini-Home-v4.1-APK
+          path: mini-home/build/outputs/*.apk
+          if-no-files-found: error

@@ -6,7 +6,7 @@ android {
         applicationId 'com.pocketbeat.player'
         minSdk 10
         targetSdk 28
-        versionCode 10
-        versionName '1.0-touch'
+        versionCode 11
+        versionName '2.0-custom'
     }
 }

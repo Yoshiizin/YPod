@@ -406,8 +406,13 @@ public final class MiniActivity extends Activity {
     }
     float bound(float v){return Math.max(0,Math.min(v,Math.max(0,apps.size()*33-251)));}
     int tile(float x,float y){
-      if(x<14||x>153)return -1;
-      for(int i=0;i<4;i++)if(y>=94+i*25&&y<=116+i*25)return i;
+      // Touch rows never overlap the clock (clock ends at y=89).
+      // Include both icon and label plus a generous finger-size hit target.
+      if(x<12||x>225)return -1;
+      if(y>=92&&y<120)return 0;  // Music
+      if(y>=120&&y<145)return 1; // Files
+      if(y>=145&&y<170)return 2; // Settings
+      if(y>=170&&y<197)return 3; // Apps
       return -1;
     }
     @Override public boolean onTouchEvent(MotionEvent ev){
@@ -438,6 +443,12 @@ public final class MiniActivity extends Activity {
           shiftX*=.7f;shiftY*=.7f;requestFrame();
           if(longPress)return true;
           float dx=x-startX,dy=y-startY;
+          // Resolve small finger drift as a tap BEFORE checking swipes.
+          // Music must always take priority over date/clock interactions.
+          if(!drawer&&panelTarget==0&&downTile>=0&&tile(x,y)==downTile&&
+              Math.abs(dx)<24&&Math.abs(dy)<24){
+            shortcut(downTile);return true;
+          }
           if(moved){
             if(panelTarget!=0){
               if(Math.abs(dy)>35)setPanel(0);
@@ -468,13 +479,14 @@ public final class MiniActivity extends Activity {
             int ix=tile(x,y);
             if(ix>=0&&ix==downTile){shortcut(ix);return true;}
             if(y>=290){setDrawer(true);return true;}
-            if(y>=66&&y<94){
-              if(x>=138){clockMode=!clockMode;invalidate();}
+            // Clock is ONLY interactive above the Music row.
+            if(y>=66&&y<90){
+              if(x>=142){clockMode=!clockMode;invalidate();}
               else setPanel(1);
               return true;
             }
             if(y<44&&x>=175){setPanel(2);return true;}
-            if(y<68&&x>105){clockMode=!clockMode;invalidate();return true;}
+            if(y<66&&x>105){clockMode=!clockMode;invalidate();return true;}
             if(y>210&&y<289){setPanel(1);return true;}
           }
           return true;

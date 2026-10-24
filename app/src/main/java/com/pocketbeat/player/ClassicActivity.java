@@ -43,8 +43,9 @@ import java.util.TreeMap;
  * All UI elements are native Android Views; no web, Google services or AndroidX.
  */
 public class ClassicActivity extends Activity {
-    private static final int INK=0xff242424, SUB=0xff777777, BLUE=0xff2374ad,
-        LINE=0xffdedede, WHITE=0xffffffff, ORANGE=0xffdd6c24;
+    private static final int INK=0xfff9f8fc, SUB=0xff9b9aaa, BLUE=0xffff4976,
+        LINE=0xff282735, WHITE=0xffffffff, ORANGE=0xffb45aff,
+        BG=0xff0b0b12, SURFACE=0xff171720, SURFACE2=0xff242330;
     private static final int SONGS=0, ARTISTS=1, ALBUMS=2, LISTS=3, DETAIL=4, PLAYER=5, SETTINGS=6;
     private int screen=SONGS, detailParent=SONGS, playerBack=SONGS, current=-1, queuePosition=-1;
     private int repeat=0; // 0 = off, 1 = all, 2 = one
@@ -135,7 +136,7 @@ public class ClassicActivity extends Activity {
     private void render(){
         miniTitle=null;miniButton=null;mainPlay=null;timeAt=null;timeLeft=null;progress=null;coverImage=null;
         shuffleButton=null;repeatButton=null;
-        shell=column();shell.setBackgroundColor(0xfff8f8f8);
+        shell=column();shell.setBackgroundColor(BG);
         shell.setFocusableInTouchMode(true);shell.requestFocus();setContentView(shell);
         statusBar();
         if(screen==PLAYER){topBar("Reproduzindo", "Biblioteca", null, new View.OnClickListener(){
@@ -152,7 +153,7 @@ public class ClassicActivity extends Activity {
             String action=screen==SONGS?"Ajustes":screen==LISTS?"+":null;
             topBar(names[screen],null,action,null);
         }
-        body=column();body.setBackgroundColor(WHITE);
+        body=column();body.setBackgroundColor(BG);
         shell.addView(body,new LinearLayout.LayoutParams(-1,0,1));
         if(screen==SONGS)showSongs();
         else if(screen==ARTISTS)showGroups(true);
@@ -163,94 +164,103 @@ public class ClassicActivity extends Activity {
         else showSettings();
         if(screen!=PLAYER&&screen!=SETTINGS){miniPlayer();tabBar();}
     }
+
     private void statusBar(){
-        LinearLayout bar=row();bar.setBackgroundDrawable(gradient(0xfffafafa,0xffe6e6e6,0));
-        TextView name=text("YPod  •  MUSIC",10,INK,true);padding(name,9,0);
-        bar.addView(name,new LinearLayout.LayoutParams(0,dp(18),1));
+        LinearLayout bar=row();bar.setBackgroundColor(BG);
+        TextView brand=text("Y  /  P O D",10,BLUE,true);padding(brand,14,0);
+        bar.addView(brand,new LinearLayout.LayoutParams(0,dp(25),1));
         String clock=new SimpleDateFormat("HH:mm",Locale.getDefault()).format(new Date());
-        TextView time=text(clock,10,INK,true);time.setGravity(Gravity.CENTER);bar.addView(time,lp(56,18));
-        TextView off=text("OFFLINE",9,0xff555555,false);off.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-        padding(off,8,0);bar.addView(off,new LinearLayout.LayoutParams(0,dp(18),1));
-        shell.addView(bar,lp(-1,18));
+        TextView time=text(clock,10,INK,true);time.setGravity(Gravity.CENTER);
+        bar.addView(time,lp(56,25));
+        TextView offline=text("●  OFFLINE",9,SUB,true);offline.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+        padding(offline,12,0);bar.addView(offline,new LinearLayout.LayoutParams(0,dp(25),1));
+        shell.addView(bar,lp(-1,25));
     }
     private TextView barButton(String value){
         TextView t=text(value,12,WHITE,true);t.setGravity(Gravity.CENTER);
-        t.setBackgroundDrawable(bordered(0xff8dc7f4,0xff1c6eab,5,0xff3979a6));
+        t.setBackgroundDrawable(bordered(0xff383044,0xff201d2b,9,0xff51405e));
         return t;
     }
     private void topBar(String title,String back,String action,View.OnClickListener backAction){
-        LinearLayout bar=row();bar.setBackgroundDrawable(bordered(0xfffafafa,0xffc3c7ce,0,0xffa1a5ab));
-        LinearLayout left=row();left.setPadding(dp(5),0,0,0);
-        if(back!=null){TextView b=barButton("‹ "+back);left.addView(b,lp(70,29));b.setOnClickListener(backAction);}
-        bar.addView(left,new LinearLayout.LayoutParams(0,dp(42),1));
-        TextView t=text(title,16,INK,true);t.setGravity(Gravity.CENTER);
-        t.setShadowLayer(1,0,1,WHITE);bar.addView(t,new LinearLayout.LayoutParams(0,dp(42),2));
-        LinearLayout right=row();right.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-        right.setPadding(0,0,dp(5),0);
+        LinearLayout bar=row();bar.setBackgroundColor(BG);
+        LinearLayout left=row();left.setPadding(dp(7),0,0,0);
+        if(back!=null){
+            TextView b=barButton("‹  Voltar");left.addView(b,lp(70,34));b.setOnClickListener(backAction);
+        }
+        bar.addView(left,new LinearLayout.LayoutParams(0,dp(51),1));
+        TextView t=text(title,19,INK,true);t.setGravity(Gravity.CENTER);
+        bar.addView(t,new LinearLayout.LayoutParams(0,dp(51),2));
+        LinearLayout right=row();right.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);right.setPadding(0,0,dp(7),0);
         if(action!=null){
-            TextView b=barButton(action);right.addView(b,lp(action.equals("+")?33:57,29));
+            TextView b=barButton(action.equals("+")?"+":"⚙");right.addView(b,lp(44,34));
             b.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){if(screen==LISTS)newPlaylist();else{screen=SETTINGS;render();}}
             });
         }
-        bar.addView(right,new LinearLayout.LayoutParams(0,dp(42),1));shell.addView(bar,lp(-1,42));
+        bar.addView(right,new LinearLayout.LayoutParams(0,dp(51),1));shell.addView(bar,lp(-1,51));
+        View line=new View(this);line.setBackgroundColor(LINE);shell.addView(line,lp(-1,1));
     }
     private void tabBar(){
-        LinearLayout nav=row();nav.setBackgroundDrawable(gradient(0xff55565a,0xff111115,0));
+        LinearLayout nav=row();nav.setBackgroundColor(SURFACE);
         final String[] marks={"♫","●","▣","☷"};
         final String[] captions={"Músicas","Artistas","Álbuns","Listas"};
         for(int i=0;i<4;i++){
-            final int which=i;
-            LinearLayout item=column();item.setGravity(Gravity.CENTER);
-            if(screen==i)item.setBackgroundDrawable(gradient(0xff6a6d73,0xff282a2f,4));
-            TextView symbol=text(marks[i],23,screen==i?0xff88d8ff:0xffc9cbd0,true);
+            final int which=i;LinearLayout item=column();item.setGravity(Gravity.CENTER);
+            if(screen==i)item.setBackgroundDrawable(gradient(0xff352139,0xff1d1728,11));
+            TextView symbol=text(marks[i],22,screen==i?BLUE:SUB,true);
             symbol.setGravity(Gravity.CENTER);item.addView(symbol,lp(-1,25));
-            TextView caption=text(captions[i],10,screen==i?WHITE:0xffb3b3b9,screen==i);
-            caption.setGravity(Gravity.CENTER);item.addView(caption,lp(-1,17));
-            nav.addView(item,new LinearLayout.LayoutParams(0,dp(48),1));
+            TextView caption=text(captions[i],10,screen==i?INK:SUB,screen==i);
+            caption.setGravity(Gravity.CENTER);item.addView(caption,lp(-1,16));
+            nav.addView(item,new LinearLayout.LayoutParams(0,dp(52),1));
             item.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){screen=which;render();}
             });
         }
-        shell.addView(nav,lp(-1,48));
+        shell.addView(nav,lp(-1,52));
     }
     private void miniPlayer(){
         if(current<0||current>=songs.size())return;
-        LinearLayout mini=row();mini.setBackgroundDrawable(bordered(0xfff8f8f8,0xffd9dce1,0,0xffb0b6bd));
-        TextView icon=text("♫",23,WHITE,true);icon.setGravity(Gravity.CENTER);
-        icon.setBackgroundDrawable(gradient(0xffffc987,0xffc35721,4));
-        LinearLayout.LayoutParams ip=lp(33,33);ip.leftMargin=dp(7);ip.rightMargin=dp(7);mini.addView(icon,ip);
-        miniTitle=text(songs.get(current).title,12,INK,true);mini.addView(miniTitle,new LinearLayout.LayoutParams(0,dp(41),1));
-        miniButton=text(media!=null&&media.isPlaying()?"Ⅱ":"▶",22,BLUE,true);
-        miniButton.setGravity(Gravity.CENTER);mini.addView(miniButton,lp(46,41));
+        LinearLayout mini=row();mini.setBackgroundDrawable(gradient(0xff342033,0xff1a1923,0));
+        TextView icon=text("♫",21,WHITE,true);icon.setGravity(Gravity.CENTER);
+        icon.setBackgroundDrawable(gradient(0xffff6789,0xff823a91,8));
+        LinearLayout.LayoutParams ip=lp(35,35);ip.leftMargin=dp(9);ip.rightMargin=dp(9);mini.addView(icon,ip);
+        miniTitle=text(songs.get(current).title,13,INK,true);
+        mini.addView(miniTitle,new LinearLayout.LayoutParams(0,dp(47),1));
+        miniButton=text(media!=null&&media.isPlaying()?"Ⅱ":"▶",22,WHITE,true);
+        miniButton.setGravity(Gravity.CENTER);
+        mini.addView(miniButton,lp(52,47));
         miniButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){toggle();}});
-        View.OnClickListener open=new View.OnClickListener(){public void onClick(View v){
-            playerBack=screen;screen=PLAYER;render();
-        }};
+        View.OnClickListener open=new View.OnClickListener(){
+            public void onClick(View v){playerBack=screen;screen=PLAYER;render();}
+        };
         icon.setOnClickListener(open);miniTitle.setOnClickListener(open);
-        shell.addView(mini,lp(-1,43));
+        shell.addView(mini,lp(-1,47));
     }
+
     private void sectionNote(String value){
-        TextView t=text(value,11,0xff888888,false);t.setBackgroundColor(0xfff1f1f3);
-        padding(t,12,5);body.addView(t,lp(-1,26));
+        TextView t=text(value,10,SUB,true);t.setBackgroundColor(BG);
+        padding(t,15,8);body.addView(t,lp(-1,33));
     }
     private ListView list(){
-        ListView l=new ListView(this);l.setBackgroundColor(WHITE);l.setCacheColorHint(WHITE);
+        ListView l=new ListView(this);l.setBackgroundColor(BG);l.setCacheColorHint(BG);
         l.setDivider(new ColorDrawable(LINE));l.setDividerHeight(dp(1));
-        l.setSelector(new ColorDrawable(0xffdceefa));l.setFastScrollEnabled(true);
+        l.setSelector(new ColorDrawable(0xff312238));l.setFastScrollEnabled(true);
         body.addView(l,new LinearLayout.LayoutParams(-1,0,1));return l;
     }
     private View cell(String symbol,String name,String sub,int color){
-        LinearLayout outer=row();outer.setBackgroundColor(WHITE);
+        LinearLayout outer=row();outer.setBackgroundColor(BG);
         TextView icon=text(symbol,22,WHITE,true);icon.setGravity(Gravity.CENTER);
-        icon.setBackgroundDrawable(gradient(light(color),color,5));
-        LinearLayout.LayoutParams iconp=lp(38,38);iconp.leftMargin=dp(10);iconp.rightMargin=dp(10);
+        icon.setBackgroundDrawable(gradient(light(color),color,11));
+        LinearLayout.LayoutParams iconp=lp(41,41);iconp.leftMargin=dp(12);iconp.rightMargin=dp(12);
         outer.addView(icon,iconp);
         LinearLayout content=column();content.setGravity(Gravity.CENTER_VERTICAL);
-        TextView top=text(name,14,INK,true);content.addView(top,lp(-1,21));
-        if(sub!=null&&sub.length()>0){TextView bottom=text(sub,11,SUB,false);content.addView(bottom,lp(-1,17));}
-        outer.addView(content,new LinearLayout.LayoutParams(0,dp(54),1));
-        TextView arrow=text("›",24,0xffb0b0b6,false);arrow.setGravity(Gravity.CENTER);outer.addView(arrow,lp(23,54));
+        TextView top=text(name,14,INK,true);content.addView(top,lp(-1,23));
+        if(sub!=null&&sub.length()>0){
+            TextView bottom=text(sub,11,SUB,false);content.addView(bottom,lp(-1,17));
+        }
+        outer.addView(content,new LinearLayout.LayoutParams(0,dp(62),1));
+        TextView arrow=text("›",24,SUB,false);arrow.setGravity(Gravity.CENTER);
+        outer.addView(arrow,lp(24,62));
         return outer;
     }
     private int light(int color){
@@ -261,10 +271,12 @@ public class ClassicActivity extends Activity {
         final ArrayList<Integer> visible=new ArrayList<Integer>();
         for(int i=0;i<songs.size();i++)visible.add(i);
         EditText find=new EditText(this);find.setTextSize(13);find.setSingleLine(true);
-        find.setHint("⌕  Buscar músicas");find.setBackgroundDrawable(bordered(0xffeeeeef,0xfffafafa,8,0xffd3d3d6));
+        find.setHint("⌕  Buscar músicas, artistas e álbuns");find.setTextColor(INK);find.setHintTextColor(SUB);
+        find.setPadding(dp(12),0,dp(12),0);
+        find.setBackgroundDrawable(bordered(0xff24222d,0xff181821,10,0xff39313d));
         LinearLayout searchbox=row();padding(searchbox,9,6);searchbox.addView(find,lp(-1,31));
         body.addView(searchbox,lp(-1,43));
-        sectionNote(songs.size()+" MÚSICAS NO DISPOSITIVO");
+        sectionNote("SUA BIBLIOTECA  •  "+songs.size()+" FAIXAS");
         if(songs.size()==0){emptyState("Nenhuma música encontrada","Copie músicas MP3 para o cartão SD e toque em Atualizar nos Ajustes.");return;}
         final ListView list=list();
         final BaseAdapter adapter=new BaseAdapter(){
@@ -305,7 +317,7 @@ public class ClassicActivity extends Activity {
     }
     private void emptyState(String title,String info){
         LinearLayout empty=column();empty.setGravity(Gravity.CENTER);padding(empty,18,20);
-        TextView mark=text("♫",52,0xffcacaca,true);mark.setGravity(Gravity.CENTER);empty.addView(mark,lp(-1,70));
+        TextView mark=text("♫",52,BLUE,true);mark.setGravity(Gravity.CENTER);empty.addView(mark,lp(-1,70));
         TextView h=text(title,16,INK,true);h.setGravity(Gravity.CENTER);h.setSingleLine(false);empty.addView(h,lp(-1,44));
         TextView desc=text(info,12,SUB,false);desc.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
         desc.setSingleLine(false);desc.setEllipsize(null);empty.addView(desc,lp(-1,-2));
@@ -599,7 +611,7 @@ public class ClassicActivity extends Activity {
         settingsRow("Atualizar músicas", "Buscar novas faixas no cartão SD",new View.OnClickListener(){
             public void onClick(View v){scan();Toast.makeText(ClassicActivity.this,songs.size()+" músicas encontradas",Toast.LENGTH_SHORT).show();render();}
         });
-        settingsRow("Sobre o YPod Music", "Versão 3.0 • clássico para Android 2.3",null);
+        settingsRow("Sobre o YPod Midnight", "Edição 4.0 • feita para o Galaxy Y Duos",null);
         settingsRow("Sair do aplicativo", "Interromper reprodução e voltar ao Android",new View.OnClickListener(){
             public void onClick(View v){confirmExit();}
         });

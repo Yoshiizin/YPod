@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Context;
+import android.content.BroadcastReceiver;
+ import android.content.Intent;
+ import android.content.IntentFilter;
+ import android.os.PowerManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,6 +53,22 @@ public class ClassicActivity extends Activity {
     private final ArrayList<Integer> queue=new ArrayList<Integer>();
     private final Random random=new Random();
     private MediaPlayer media;
+    private AudioManager audioManager;
+    private final AudioManager.OnAudioFocusChangeListener audioFocus=new AudioManager.OnAudioFocusChangeListener(){
+        public void onAudioFocusChange(int change){
+            if(change==AudioManager.AUDIOFOCUS_LOSS || change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK){
+                if(media!=null)try{if(media.isPlaying())media.pause();}catch(Exception ignored){}
+                updateButtons();
+            }
+        }
+    };
+    private final BroadcastReceiver unplugReceiver=new BroadcastReceiver(){
+        public void onReceive(Context c,Intent i){
+            if(AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(i.getAction())&&media!=null)
+                try{if(media.isPlaying())media.pause();}catch(Exception ignored){}
+            updateButtons();
+        }
+    };
     private LinearLayout body, shell;
     private TextView miniTitle, miniButton, mainPlay, timeAt, timeLeft, shuffleButton, repeatButton;
     private SeekBar progress;
@@ -87,6 +107,8 @@ public class ClassicActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        audioManager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        registerReceiver(unplugReceiver,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         shuffle=getPreferences(0).getBoolean("shuffle",false);
         repeat=getPreferences(0).getInt("repeat",0);
         scan();render();handler.post(ticker);
@@ -437,7 +459,9 @@ public class ClassicActivity extends Activity {
         current=id;
         if(media!=null){try{media.reset();media.release();}catch(Exception e){}media=null;}
         try{
+            if(audioManager!=null)audioManager.requestAudioFocus(audioFocus,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
             media=new MediaPlayer();media.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            media.setWakeMode(getApplicationContext(),PowerManager.PARTIAL_WAKE_LOCK);
             media.setDataSource(songs.get(current).path);
             media.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
                 public void onCompletion(MediaPlayer p){next(1,false);}
@@ -624,6 +648,8 @@ public class ClassicActivity extends Activity {
     }
     @Override protected void onDestroy(){
         handler.removeCallbacks(ticker);
+        try{unregisterReceiver(unplugReceiver);}catch(Exception ignored){}
+        if(audioManager!=null)audioManager.abandonAudioFocus(audioFocus);
         if(media!=null){try{media.release();}catch(Exception ignored){}media=null;}
         super.onDestroy();
     }

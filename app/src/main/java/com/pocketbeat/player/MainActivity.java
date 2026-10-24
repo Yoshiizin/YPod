@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
     setContentView(root);
     LinearLayout status=horizontal();pad(status,16,5);status.setBackgroundColor(0xff0d1516);
     TextView brand=text("YPod",15,ACCENT,true);status.addView(brand,new LinearLayout.LayoutParams(0,dp(30),1));
-    TextView clock=text("●  OFFLINE",10,MUTED,true);status.addView(clock);root.addView(status);
+    TextView clock=text("● OFFLINE",10,MUTED,true);status.addView(clock);TextView exit=text("   SAIR  ✕",11,Color.WHITE,true);pad(exit,5,6);status.addView(exit);exit.setOnClickListener(new View.OnClickListener(){public void onClick(View v){confirmExit();}});root.addView(status);
     page=vertical();root.addView(page,new LinearLayout.LayoutParams(-1,0,1));
     mini=horizontal();mini.setBackgroundColor(PANEL);root.addView(mini);
     LinearLayout nav=horizontal();nav.setBackgroundColor(0xff101b1b);root.addView(nav,new LinearLayout.LayoutParams(-1,dp(55)));
@@ -111,6 +111,7 @@ public class MainActivity extends Activity {
   private void toggle(){if(player==null){if(index<0)start(0);else start(index);return;}try{if(player.isPlaying())player.pause();else player.start();}catch(Exception ignored){}}
   private String stamp(int ms){int s=Math.max(0,ms/1000);return (s/60)+":"+String.format(Locale.US,"%02d",s%60);}
   private final Runnable ticker=new Runnable(){public void run(){if(player!=null&&seek!=null&&seek.getParent()!=null){try{int d=player.getDuration(),p=player.getCurrentPosition();if(d>0&&!seeking)seek.setProgress(p*1000/d);if(timeStart!=null)timeStart.setText(stamp(p));if(timeEnd!=null)timeEnd.setText(stamp(d));}catch(Exception ignored){}}handler.postDelayed(this,700);}};
+  private void confirmExit(){new android.app.AlertDialog.Builder(this).setTitle("Sair do YPod?").setMessage("A reprodução será interrompida e você voltará ao Android.").setPositiveButton("Sair",new android.content.DialogInterface.OnClickListener(){public void onClick(android.content.DialogInterface d,int which){if(player!=null){player.stop();player.release();player=null;}finish();}}).setNegativeButton("Cancelar",null).show();}
   @Override protected void onDestroy(){handler.removeCallbacks(ticker);if(player!=null){player.release();player=null;}super.onDestroy();}
   @Override public void onBackPressed(){activeTab=0;showHome();}
 }

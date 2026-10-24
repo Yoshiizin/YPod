@@ -43,13 +43,16 @@ public final class MiniActivity extends Activity {
       f.addAction(Intent.ACTION_BATTERY_CHANGED);
       f.addAction(Intent.ACTION_TIME_TICK);
       f.addAction(Intent.ACTION_DATE_CHANGED);
+      f.addAction(Intent.ACTION_TIME_CHANGED);
+      f.addAction(Intent.ACTION_TIMEZONE_CHANGED);
       registerReceiver(batteryReceiver,f);listening=true;
     }
+    home.startClock();
     home.invalidate();
   }
   @Override protected void onPause(){
     if(listening){unregisterReceiver(batteryReceiver);listening=false;}
-    if(home!=null)home.stopFrames();
+    if(home!=null){home.stopFrames();home.stopClock();}
     super.onPause();
   }
   @Override public void onBackPressed(){
@@ -122,6 +125,14 @@ public final class MiniActivity extends Activity {
     final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
     final RectF r=new RectF();
     final Handler h=new Handler();
+    final Runnable clockTicker=new Runnable(){
+      public void run(){if(getWindowToken()!=null){invalidate();startClock();}}
+    };
+    void startClock(){
+      h.removeCallbacks(clockTicker);
+      h.postDelayed(clockTicker,60000L-(System.currentTimeMillis()%60000L)+100L);
+    }
+    void stopClock(){h.removeCallbacks(clockTicker);}
     boolean drawer=false,moved=false,longPress=false,clockMode=false;
     int panelTarget=0,panelDraw=0,downTile=-1;
     float drawerProgress=0,panelProgress=0,clockProgress=0,shiftX=0,shiftY=0;
@@ -157,6 +168,17 @@ public final class MiniActivity extends Activity {
     }
     void word(Canvas c,String s,float x,float y,float sz,int col,boolean bold){
       paint(col);p.setTypeface(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);p.setTextSize(sz);c.drawText(s,x,y,p);
+    }
+    String currentTime(){return new SimpleDateFormat("HH:mm",Locale.getDefault()).format(new Date());}
+    void mono(Canvas c,String s,float cx,float baseline,float size,int color,int alpha){
+      paint(color);p.setTypeface(Typeface.create(Typeface.MONOSPACE,Typeface.BOLD));
+      p.setTextSize(size);p.setAlpha(alpha);
+      c.drawText(s,cx-p.measureText(s)/2f,baseline,p);p.setAlpha(255);
+    }
+    void drawClockPill(Canvas c){
+      round(c,143,68,83,20,7,0xff072c85);
+      circle(c,153,78,2,0xff79dfeb);
+      mono(c,currentTime(),188,83,14,WHITE,255);
     }
     @Override protected void onDraw(Canvas real){
       long now=SystemClock.uptimeMillis();
@@ -237,12 +259,14 @@ public final class MiniActivity extends Activity {
       round(c,175,21,48,18,9,0xffe4484a);
       word(c,":)",190,34,11,WHITE,true);
       word(c,"Welcome",112,61,23,WHITE,true);
-      if(clockProgress>.02f){
+      if(clockProgress<.01f)drawClockPill(c);
+      if(clockProgress>.01f){
         int a=(int)(255*clockProgress);
-        paint(BLUE);p.setAlpha(a);c.drawRect(106,13,240,69,p);p.setAlpha(255);
-        alphaText(c,new SimpleDateFormat("HH:mm",Locale.getDefault()).format(new Date()),
-          115,44,30,WHITE,true,a);
-        alphaText(c,"HELLO TODAY",129,59,8,LIGHT,true,a);
+        paint(BLUE);p.setAlpha(a);c.drawRect(106,13,240,89,p);p.setAlpha(255);
+        round(c,112,17,116,48,10,0xff072c85);
+        alphaText(c,"YPOD / LOCAL TIME",120,28,6,LIGHT,true,a);
+        mono(c,currentTime(),170,54,26,WHITE,a);
+        circle(c,216,25,2,0xff79dfeb);
       }
       String date=new SimpleDateFormat("EEE, d MMM",Locale.ENGLISH).format(new Date());
       word(c,date+"   /   "+(battery<0?"--":battery)+"%",18,83,8,WHITE,false);
@@ -444,8 +468,12 @@ public final class MiniActivity extends Activity {
             int ix=tile(x,y);
             if(ix>=0&&ix==downTile){shortcut(ix);return true;}
             if(y>=290){setDrawer(true);return true;}
-            if(y>=68&&y<95){setPanel(1);return true;}
-            if(y<68&&x>=175){setPanel(2);return true;}
+            if(y>=66&&y<94){
+              if(x>=138){clockMode=!clockMode;invalidate();}
+              else setPanel(1);
+              return true;
+            }
+            if(y<44&&x>=175){setPanel(2);return true;}
             if(y<68&&x>105){clockMode=!clockMode;invalidate();return true;}
             if(y>210&&y<289){setPanel(1);return true;}
           }

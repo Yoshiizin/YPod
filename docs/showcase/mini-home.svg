@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 360 520" role="img" aria-labelledby="miniTitle miniDesc">
+<title id="miniTitle">MINI HOME 4.1</title><desc id="miniDesc">Prévia ilustrativa da interface, não é uma captura de tela de um celular real.</desc>
+<defs>
+  <linearGradient id="backmini" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#162752"/><stop offset="1" stop-color="#090e24"/></linearGradient>
+  <linearGradient id="framemini" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fefefe"/><stop offset="1" stop-color="#a7b3c9"/></linearGradient>
+  <clipPath id="screenmini"><rect x="66" y="50" width="228" height="304" rx="13"/></clipPath>
+</defs>
+<rect width="360" height="520" rx="25" fill="url(#backmini)"/>
+<g opacity=".13" stroke="#8faaff" stroke-width=".7"><path d="M0 422H360M0 443H360M0 464H360M0 485H360M24 405V520M54 405V520M84 405V520M114 405V520M144 405V520M174 405V520M204 405V520M234 405V520M264 405V520M294 405V520M324 405V520"/></g>
+<rect x="43" y="27" width="274" height="365" rx="42" fill="#02091b" opacity=".5"/>
+<rect x="49" y="29" width="262" height="351" rx="36" fill="url(#framemini)"/>
+<rect x="58" y="38" width="244" height="330" rx="29" fill="#e3e9f4"/>
+<rect x="66" y="50" width="228" height="304" rx="13" fill="#11378b"/>
+<rect x="157" y="40" width="45" height="5" rx="2.5" fill="#7f8b9d"/>
+<circle cx="208" cy="42" r="2" fill="#53657f"/>
+<g clip-path="url(#screenmini)"><g transform="translate(66 50) scale(.95)"><rect width="240" height="320" fill="#0b43c5"/>
+<text x="14" y="15" font-size="7" fill="#cde2ff" font-family="Arial">MINI HOME / YPOD</text>
+<g fill="none" stroke="#bed8ff" stroke-width=".8"><circle cx="19" cy="29" r="3"/><circle cx="19" cy="55" r="3"/></g>
+<circle cx="19" cy="42" r="3" fill="#f8f6f5"/>
+<g fill="#c8dcff" font-family="Arial" font-size="8"><text x="28" y="32">Friday</text><text x="28" y="58">Sunday</text></g>
+<text x="28" y="45" font-family="Arial" font-size="8" fill="white" font-weight="bold">Saturday</text>
+<text x="132" y="40" font-size="36" font-weight="bold" font-family="Arial" fill="white">Hi</text>
+<rect x="176" y="19" width="47" height="21" rx="10" fill="#e34d5e"/><text x="187" y="34" font-size="12" fill="white" font-family="Arial">:)</text>
+<text x="110" y="64" font-size="24" font-weight="900" font-family="Arial" fill="white">Welcome</text>
+<text x="18" y="84" font-family="Arial" font-size="8" fill="white">Sat, 24 Oct    /    87%</text>
+<rect x="145" y="69" width="79" height="18" rx="6" fill="#092e92"/><circle cx="154" cy="77" r="2" fill="#86e7f0"/>
+<text x="163" y="82" fill="white" font-size="14" font-family="monospace" font-weight="bold">14:42</text>
+<path d="M16 91H224" stroke="#75a1e7"/>
+<g font-family="Arial" font-size="11" fill="white">
+<circle cx="28" cy="106" r="10" fill="#2c6bd7"/><text x="24" y="110" font-size="12">♫</text><text x="47" y="111" font-weight="bold">Music</text>
+<circle cx="28" cy="131" r="10" fill="#2c6bd7"/><path d="M21 127H35V135H21Z M22 124H28V127H22" fill="white"/><text x="47" y="136">Files</text>
+<circle cx="28" cy="156" r="10" fill="#2c6bd7"/><circle cx="28" cy="156" r="5" fill="none" stroke="white" stroke-width="2"/><text x="47" y="161">Settings</text>
+<circle cx="28" cy="181" r="10" fill="#2c6bd7"/><g fill="white"><rect x="23" y="176" width="4" height="4"/><rect x="29" y="176" width="4" height="4"/><rect x="23" y="182" width="4" height="4"/><rect x="29" y="182" width="4" height="4"/></g><text x="47" y="186">Apps</text>
+</g>
+<path d="M21 289L206 275L238 297H44Z" fill="#08245e"/>
+<path d="M109 187L174 194L180 253L115 251Z" fill="#d9d5de"/>
+<path d="M116 195L164 201L163 226L115 223Z" fill="#87dcf1" stroke="#57728d" stroke-width="4"/>
+<text x="124" y="218" fill="#31536b" font-size="18" font-weight="bold" font-family="Arial">404</text>
+<path d="M126 252L174 257L181 266L121 261Z" fill="#9298aa"/>
+<rect x="136" y="241" width="20" height="4" rx="1" fill="#474e6c"/>
+<path d="M74 265L105 269L107 281L78 274Z" fill="#a0acc3"/><path d="M87 263V272M81 267H95" stroke="#33405d" stroke-width="2"/>
+<ellipse cx="49" cy="273" rx="26" ry="12" fill="#788cae"/><ellipse cx="49" cy="273" rx="15" ry="7" fill="#bfc7d7"/><ellipse cx="49" cy="273" rx="9" ry="4" fill="#485977"/>
+<rect x="190" y="260" width="21" height="31" rx="3" transform="rotate(-17 190 260)" fill="#dc4250"/><text transform="rotate(-17 196 278)" x="185" y="281" font-family="Arial" font-size="8" fill="white" font-weight="bold">COLA</text>
+<rect x="56" y="208" width="25" height="26" rx="8" fill="#2d71d0"/><circle cx="64" cy="221" r="3" fill="#173e8a"/><circle cx="75" cy="221" r="3" fill="#173e8a"/>
+<rect x="106" y="295" width="29" height="22" rx="11" fill="#2d70d4"/><text x="113" y="311" font-size="13" fill="white">□</text></g></g>
+<circle cx="180" cy="362" r="6.5" fill="none" stroke="#8b96aa" stroke-width="1.3"/>
+<text x="180" y="430" font-family="Arial,sans-serif" font-size="19" font-weight="800" fill="#ffffff" text-anchor="middle">MINI HOME 4.1</text>
+<text x="180" y="454" font-family="Arial,sans-serif" font-size="11" fill="#a7b8df" text-anchor="middle">ANDROID 2.3.6  ·  240 × 320</text>
+<rect x="87" y="474" width="186" height="24" rx="12" fill="#273c73"/>
+<text x="180" y="490" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.4" fill="#a9f6ed" text-anchor="middle">PRÉVIA ILUSTRATIVA</text>
+</svg>

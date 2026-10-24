@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 360 520" role="img" aria-labelledby="dinoTitle dinoDesc">
+<title id="dinoTitle">Y-DINO 1.0</title><desc id="dinoDesc">Prévia ilustrativa da interface, não é uma captura de tela de um celular real.</desc>
+<defs>
+  <linearGradient id="backdino" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#162752"/><stop offset="1" stop-color="#090e24"/></linearGradient>
+  <linearGradient id="framedino" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fefefe"/><stop offset="1" stop-color="#a7b3c9"/></linearGradient>
+  <clipPath id="screendino"><rect x="66" y="50" width="228" height="304" rx="13"/></clipPath>
+</defs>
+<rect width="360" height="520" rx="25" fill="url(#backdino)"/>
+<g opacity=".13" stroke="#8faaff" stroke-width=".7"><path d="M0 422H360M0 443H360M0 464H360M0 485H360M24 405V520M54 405V520M84 405V520M114 405V520M144 405V520M174 405V520M204 405V520M234 405V520M264 405V520M294 405V520M324 405V520"/></g>
+<rect x="43" y="27" width="274" height="365" rx="42" fill="#02091b" opacity=".5"/>
+<rect x="49" y="29" width="262" height="351" rx="36" fill="url(#framedino)"/>
+<rect x="58" y="38" width="244" height="330" rx="29" fill="#e3e9f4"/>
+<rect x="66" y="50" width="228" height="304" rx="13" fill="#11378b"/>
+<rect x="157" y="40" width="45" height="5" rx="2.5" fill="#7f8b9d"/>
+<circle cx="208" cy="42" r="2" fill="#53657f"/>
+<g clip-path="url(#screendino)"><g transform="translate(66 50) scale(.95)"><rect width="240" height="320" fill="#101c4b"/><rect y="43" width="240" height="210" fill="#192d73"/>
+<g fill="#536bb1"><rect x="7" y="55" width="2" height="2"/><rect x="78" y="86" width="2" height="2"/><rect x="149" y="117" width="2" height="2"/><rect x="220" y="148" width="2" height="2"/><rect x="59" y="64" width="2" height="2"/><rect x="130" y="95" width="2" height="2"/><rect x="201" y="126" width="2" height="2"/><rect x="40" y="157" width="2" height="2"/><rect x="111" y="73" width="2" height="2"/><rect x="182" y="104" width="2" height="2"/><rect x="21" y="135" width="2" height="2"/><rect x="92" y="166" width="2" height="2"/><rect x="163" y="82" width="2" height="2"/><rect x="2" y="113" width="2" height="2"/><rect x="73" y="144" width="2" height="2"/><rect x="144" y="60" width="2" height="2"/><rect x="215" y="91" width="2" height="2"/><rect x="54" y="122" width="2" height="2"/><rect x="125" y="153" width="2" height="2"/><rect x="196" y="69" width="2" height="2"/></g>
+<text x="12" y="23" font-family="monospace" font-size="15" fill="#80f1eb" font-weight="bold">Y-DINO</text>
+<text x="12" y="40" font-family="monospace" font-size="10" fill="#e9f6ff">SCORE 008</text>
+<text x="100" y="40" font-family="monospace" font-size="10" fill="#c29bff">BEST 024</text>
+<rect x="151" y="9" width="35" height="27" rx="7" fill="#2445ae"/><text x="157" y="27" font-family="monospace" fill="#e9f6ff" font-size="10">SFX</text>
+<rect x="190" y="9" width="38" height="27" rx="7" fill="#2445ae"/><text x="202" y="27" font-family="monospace" fill="#e9f6ff" font-size="12">II</text>
+<g fill="#465fa2"><rect x="163" y="92" width="35" height="7"/><rect x="169" y="85" width="20" height="14"/><rect x="35" y="123" width="38" height="7"/><rect x="44" y="116" width="20" height="14"/></g>
+<path d="M0 249H240" stroke="#80f1eb" stroke-width="6"/><rect x="0" y="254" width="240" height="66" fill="#14265f"/>
+<g fill="#2445ae"><rect x="0" y="268" width="11" height="3"/><rect x="26" y="280" width="11" height="3"/><rect x="52" y="268" width="11" height="3"/><rect x="78" y="280" width="11" height="3"/><rect x="104" y="268" width="11" height="3"/><rect x="130" y="280" width="11" height="3"/><rect x="156" y="268" width="11" height="3"/><rect x="182" y="280" width="11" height="3"/><rect x="208" y="268" width="11" height="3"/><rect x="234" y="280" width="11" height="3"/></g>
+<g transform="translate(46 225)" shape-rendering="crispEdges">
+<path fill="#80f1eb" d="M1 16H7V11H12V8H16V1H26V11H31V15H24V21H22V24H18V21H14V24H10V21H7V19H1Z"/>
+<rect x="21" y="4" width="3" height="3" fill="#081b34"/><rect x="25" y="11" width="4" height="2" fill="#ff7ea8"/>
+</g>
+<g transform="translate(157 225)" shape-rendering="crispEdges"><rect width="22" height="25" fill="#081b34"/><rect x="2" y="2" width="18" height="21" fill="#c29bff"/><rect x="4" y="8" width="14" height="7" fill="#f3eaff"/><rect x="6" y="10" width="3" height="3" fill="#101c4b"/><rect x="14" y="10" width="3" height="3" fill="#101c4b"/></g>
+<rect x="30" y="145" width="180" height="59" rx="11" fill="#081b34" opacity=".78"/><text x="120" y="168" text-anchor="middle" font-size="20" font-weight="bold" fill="#e9f6ff" font-family="monospace">Y-DINO</text>
+<rect x="58" y="177" width="124" height="17" rx="7" fill="#80f1eb"/><text x="120" y="189" text-anchor="middle" font-size="9" font-weight="bold" fill="#101c4b" font-family="monospace">TOQUE PARA JOGAR</text>
+<text x="120" y="293" fill="#e9f6ff" text-anchor="middle" font-size="9" font-family="monospace">TOQUE PARA PULAR</text></g></g>
+<circle cx="180" cy="362" r="6.5" fill="none" stroke="#8b96aa" stroke-width="1.3"/>
+<text x="180" y="430" font-family="Arial,sans-serif" font-size="19" font-weight="800" fill="#ffffff" text-anchor="middle">Y-DINO 1.0</text>
+<text x="180" y="454" font-family="Arial,sans-serif" font-size="11" fill="#a7b8df" text-anchor="middle">ANDROID 2.3.6  ·  240 × 320</text>
+<rect x="87" y="474" width="186" height="24" rx="12" fill="#273c73"/>
+<text x="180" y="490" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.4" fill="#a9f6ed" text-anchor="middle">PRÉVIA ILUSTRATIVA</text>
+</svg>

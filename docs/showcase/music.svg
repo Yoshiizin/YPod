@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 360 520" role="img" aria-labelledby="musicTitle musicDesc">
+<title id="musicTitle">MUSIC CLASSIC 3.0</title><desc id="musicDesc">Prévia ilustrativa da interface, não é uma captura de tela de um celular real.</desc>
+<defs>
+  <linearGradient id="backmusic" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#162752"/><stop offset="1" stop-color="#090e24"/></linearGradient>
+  <linearGradient id="framemusic" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fefefe"/><stop offset="1" stop-color="#a7b3c9"/></linearGradient>
+  <clipPath id="screenmusic"><rect x="66" y="50" width="228" height="304" rx="13"/></clipPath>
+</defs>
+<rect width="360" height="520" rx="25" fill="url(#backmusic)"/>
+<g opacity=".13" stroke="#8faaff" stroke-width=".7"><path d="M0 422H360M0 443H360M0 464H360M0 485H360M24 405V520M54 405V520M84 405V520M114 405V520M144 405V520M174 405V520M204 405V520M234 405V520M264 405V520M294 405V520M324 405V520"/></g>
+<rect x="43" y="27" width="274" height="365" rx="42" fill="#02091b" opacity=".5"/>
+<rect x="49" y="29" width="262" height="351" rx="36" fill="url(#framemusic)"/>
+<rect x="58" y="38" width="244" height="330" rx="29" fill="#e3e9f4"/>
+<rect x="66" y="50" width="228" height="304" rx="13" fill="#11378b"/>
+<rect x="157" y="40" width="45" height="5" rx="2.5" fill="#7f8b9d"/>
+<circle cx="208" cy="42" r="2" fill="#53657f"/>
+<g clip-path="url(#screenmusic)"><g transform="translate(66 50) scale(.95)"><rect width="240" height="320" fill="#f8f9fb"/>
+<rect width="240" height="24" fill="#fafafa"/><text x="18" y="17" font-family="Arial" font-size="10" fill="#1e293b">14:42</text><text x="181" y="17" font-family="Arial" font-size="10" fill="#1e293b">●● 87%</text>
+<rect y="24" width="240" height="40" fill="#ecedf0"/><text x="120" y="50" font-family="Arial" text-anchor="middle" font-size="17" fill="#2c343e" font-weight="bold">YPod Music</text>
+<text x="17" y="88" font-family="Arial" font-size="20" fill="#252525" font-weight="bold">Músicas</text>
+<rect x="14" y="100" width="212" height="29" rx="7" fill="#e9eef4"/><text x="25" y="119" font-family="Arial" font-size="12" fill="#8c96a6">⌕  Buscar na biblioteca</text>
+<g font-family="Arial" font-size="11" fill="#2a3038">
+<rect x="14" y="144" width="37" height="37" rx="4" fill="#ff8d42"/><text x="32" y="168" font-size="18" fill="white" text-anchor="middle">♫</text><text x="59" y="159" font-weight="bold">Minha playlist</text><text x="59" y="173" fill="#8b9299">Artista independente</text>
+<rect x="14" y="189" width="37" height="37" rx="4" fill="#7597bd"/><path d="M20 216L32 196L45 216Z" fill="#dce8ef"/><text x="59" y="204" font-weight="bold">Noite azul</text><text x="59" y="218" fill="#8b9299">Faixas locais · MP3</text>
+<rect x="14" y="234" width="37" height="37" rx="4" fill="#b479a8"/><circle cx="32" cy="250" r="10" fill="#e7bad5"/><text x="59" y="249" font-weight="bold">Retro Vibes</text><text x="59" y="263" fill="#8b9299">Biblioteca offline</text>
+</g>
+<rect y="278" width="240" height="42" fill="#eef0f5"/>
+<g font-family="Arial" font-size="9" fill="#537caa" text-anchor="middle"><text x="30" y="302">Músicas</text><text x="90" y="302">Artistas</text><text x="150" y="302">Álbuns</text><text x="210" y="302">Listas</text></g>
+<g fill="#7d94ad"><rect x="25" y="284" width="11" height="10" rx="2"/><circle cx="90" cy="288" r="6"/><rect x="144" y="283" width="13" height="11" rx="2"/><rect x="202" y="283" width="14" height="11" rx="2"/></g></g></g>
+<circle cx="180" cy="362" r="6.5" fill="none" stroke="#8b96aa" stroke-width="1.3"/>
+<text x="180" y="430" font-family="Arial,sans-serif" font-size="19" font-weight="800" fill="#ffffff" text-anchor="middle">MUSIC CLASSIC 3.0</text>
+<text x="180" y="454" font-family="Arial,sans-serif" font-size="11" fill="#a7b8df" text-anchor="middle">ANDROID 2.3.6  ·  240 × 320</text>
+<rect x="87" y="474" width="186" height="24" rx="12" fill="#273c73"/>
+<text x="180" y="490" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.4" fill="#a9f6ed" text-anchor="middle">PRÉVIA ILUSTRATIVA</text>
+</svg>

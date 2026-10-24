@@ -1,66 +1,171 @@
-# YPod — Galaxy Y Duos Retro Collection 🦖
+<p align="center">
+  <img src="./docs/showcase/hero.svg" width="100%" alt="YPod Retro Collection — capa ilustrativa com o player, a Mini Home azul e o Y-Dino" />
+</p>
 
-Apps leves, offline e com visual retrô para o **Samsung Galaxy Y Duos GT-S6102B** (Android **2.3.6 / API 10**, tela **240 × 320**).
+<h1 align="center">YPod · Retro Collection</h1>
 
-## Projetos
+<p align="center">
+  <strong>Uma segunda vida para o Samsung Galaxy Y Duos.</strong><br/>
+  Música offline, homes personalizadas e joguinhos retrô para um Android que se recusa a aposentar. 🦖
+</p>
 
-| App | Versão | O que faz | Código | APK / build |
-| --- | --- | --- | --- | --- |
-| **YPod Music Classic** | 3.0 | Player MP3, playlists, artistas, álbuns e reprodução offline | [`app/`](./app) | [Build YPod APK](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) |
-| **YPod Home Classic** | 1.0 | Launcher clássico que já existia neste repositório | [`home/`](./home) | [Build YPod APK](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) |
-| **YPod Mini Home Dynamic** | **4.1** | Launcher azul estilo mini-home BALMUDA, com relógio digital, data, bateria, gestos, ícones vetoriais e correção da área de toque do **Music** | [`mini-home/`](./mini-home) | [Build Mini Home Galaxy Y](https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml) |
-| **Y-Dino** | **1.0** | Mini game arcade de dinossauro: tocar para pular, obstáculos, pontos, recorde e som opcional | [`mini-game/`](./mini-game) | [Build Y-Dino for Galaxy Y](https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml) |
+<p align="center">
+  <img alt="Android 2.3.6" src="https://img.shields.io/badge/Android-2.3.6%20Gingerbread-80f1eb?style=flat-square&amp;labelColor=101938" />
+  <img alt="API 10" src="https://img.shields.io/badge/API-10-80f1eb?style=flat-square&amp;labelColor=101938" />
+  <img alt="Galaxy Y Duos" src="https://img.shields.io/badge/GT--S6102B-240%C3%97320-ff7ea8?style=flat-square&amp;labelColor=101938" />
+  <img alt="Offline" src="https://img.shields.io/badge/Offline-first-80f1eb?style=flat-square&amp;labelColor=101938" />
+</p>
 
-> Os quatro são **aplicativos Android independentes**. Mini Home e Y-Dino **não** são ROMs e não exigem root. O projeto de ROM/YPod OS é uma iniciativa de desenvolvimento separada: não tente instalar os ZIPs de código como firmware.
+<p align="center">
+  <a href="https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml"><img src="https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml/badge.svg?branch=main" alt="Music e Home Classic — build" /></a>
+  <a href="https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml"><img src="https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml/badge.svg?branch=main" alt="Mini Home — build" /></a>
+  <a href="https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml"><img src="https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml/badge.svg?branch=main" alt="Y-Dino — build" /></a>
+</p>
 
-## Instalar no Galaxy Y (sem terminal)
-
-1. Abra o link de **APK / build** na tabela acima e entre na execução mais recente com **✓ Success**.
-2. Role até **Artifacts**, baixe o ZIP do aplicativo e **extraia o arquivo `.apk`** (não instale o ZIP).
-3. Copie o APK para o cartão SD ou para o telefone.
-4. No Galaxy Y: **Configurações → Aplicativos → Fontes desconhecidas**; depois abra o APK em Arquivos.
-5. Para usar a Mini Home, aperte o botão físico **Home** e selecione **YPod Mini Home 4.1**.
-6. Na Mini Home, **segure o ícone Music** e escolha seu player YPod. O **Y-Dino** aparece na lista de aplicativos.
-
-**Atenção às assinaturas:** os workflows usam uma chave de desenvolvimento temporária criada durante cada execução. APKs recompilados podem ter assinaturas diferentes e **não atualizar** uma instalação com o mesmo pacote. Antes de desinstalar, salve o que for importante (por exemplo, recordes do Y-Dino). Para permitir futuras atualizações preservando os dados, será necessário configurar uma chave de assinatura persistente e privada.
-
-## Builds no GitHub Actions
-
-- [YPod Music + Home Classic](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) — gera `app-debug.apk` e `home-debug.apk`.
-- [Mini Home v4.1](https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml) — gera `YPod-Mini-Home-Galaxy-Y.apk`.
-- [Y-Dino](https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml) — gera `YPod-Y-Dino-Galaxy-Y.apk`.
-
-Os dois workflows novos podem ser executados por **Actions → workflow desejado → Run workflow**; também são acionados por alterações nos respectivos projetos na branch `main`.
-
-Compilar com sucesso **não** garante funcionamento perfeito no hardware real. Teste instalação, som, desempenho, toque e orientação no **GT-S6102B** antes de substituir sua configuração atual.
+<p align="center">
+  <a href="#-explore-os-aplicativos">Ver os aplicativos</a> ·
+  <a href="#-baixar-e-instalar">Baixar APKs</a> ·
+  <a href="#-por-dentro-do-projeto">Código-fonte</a> ·
+  <a href="https://github.com/Yoshiizin/YPod/issues">Sugerir melhorias</a>
+</p>
 
 ---
 
-## Detalhes do player musical
+## ✨ A ideia
 
-Player offline com interface inspirada no aplicativo **Música** dos iPods touch clássicos, redesenhado para **Samsung Galaxy Y Duos GT-S6102B**, **Android 2.3.6 (API 10)** e tela pequena de **240 × 320 px**.
+O **YPod** é uma coleção de apps experimentais feitos especialmente para o **Samsung Galaxy Y Duos GT-S6102B**, com **Android 2.3.6**, **API 10** e tela de **240 × 320 px**. A proposta é reaproveitar hardware antigo com interfaces caprichadas, pouca memória e o mínimo de dependências possível.
 
-## O que funciona
+**Sem serviços Google obrigatórios, sem anúncios e sem login nos apps desta coleção.**
 
-- Biblioteca MP3 local indexada pela MediaStore, com busca por música, artista e álbum.
-- Abas **Músicas / Artistas / Álbuns / Playlists** e listas por artista e álbum.
-- Player com arte do álbum quando disponível e capa alternativa quando não há imagem.
-- Play/pausa, música anterior/seguinte, barra de progresso ajustável, embaralhar e repetir (desativado/tudo/uma).
-- Criação, preenchimento e exclusão de playlists locais; pressione uma música para adicioná-la.
-- Reprodução com wake lock para a tela desligada, controle pelo volume físico e pausa ao desconectar fones ou perder foco de áudio.
-- Aplicativo independente das versões antigas do YPod, com atividade de inicialização explícita no AndroidManifest.
-- Completamente offline, sem login ou serviços Google.
+> 📸 **Sobre as imagens:** as artes abaixo são **prévias ilustrativas construídas a partir das interfaces e funcionalidades do código**. Ainda não são capturas reais de um Galaxy Y. Os layouts e proporções podem variar no aparelho físico.
 
-## Como instalar no Galaxy Y Duos
+## 🎮 Explore os aplicativos
 
-1. Baixe o ZIP da execução bem-sucedida do workflow **Build YPod APK** em **Actions**.
-2. Extraia **app-debug.apk**; **não tente abrir o ZIP como APK**.
-3. Transfira **app-debug.apk** para o cartão SD ou memória interna do Galaxy Y.
-4. No Android 2.3, ative **Configurações → Aplicações → Fontes desconhecidas**.
-5. Instale o APK. Abra **YPod Music**, adicione arquivos MP3 ao cartão SD e use **Ajustes → Atualizar músicas** se necessário.
+<table>
+  <tr>
+    <td align="center" width="36%">
+      <img src="./docs/showcase/mini-home.svg" width="270" alt="Prévia ilustrativa da YPod Mini Home azul com relógio e Macintosh retrô" />
+    </td>
+    <td valign="top">
+      <h3>💙 YPod Mini Home <code>v4.1</code></h3>
+      <p>Uma home azul, minimalista e divertida, inspirada na estética de aparelhos compactos e interfaces japonesas.</p>
+      <ul>
+        <li>Relógio digital, dia, data e bateria reais</li>
+        <li>Atalhos para Música, Arquivos, Configurações e Apps</li>
+        <li>Gestos, transições leves e ilustração retrô</li>
+        <li>Ícones vetoriais e toque do botão <strong>Music corrigido na v4.1</strong></li>
+      </ul>
+      <p><a href="./mini-home/"><strong>📂 Ver código</strong></a> · <a href="https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml"><strong>⬇️ APK</strong></a></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./docs/showcase/y-dino.svg" width="270" alt="Prévia ilustrativa do Y-Dino, jogo de dinossauro em pixel art" />
+    </td>
+    <td valign="top">
+      <h3>🦖 Y-Dino <code>v1.0</code></h3>
+      <p>Um mini game de corrida infinita para jogar na telinha do Galaxy Y. Simples de entender, difícil de largar.</p>
+      <ul>
+        <li>Toque para pular fitas cassete e outros obstáculos</li>
+        <li>Pontuação crescente e recorde salvo localmente</li>
+        <li>Efeitos sonoros opcionais e botão de pausa</li>
+        <li>Pixel art gerada com Canvas, sem internet</li>
+      </ul>
+      <p><a href="./mini-game/"><strong>📂 Ver código</strong></a> · <a href="https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml"><strong>⬇️ APK</strong></a></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./docs/showcase/music.svg" width="270" alt="Prévia ilustrativa do YPod Music Classic com biblioteca MP3 offline" />
+    </td>
+    <td valign="top">
+      <h3>🎵 YPod Music Classic <code>v3.0</code></h3>
+      <p>Um player local inspirado nos reprodutores de música clássicos, com foco no que interessa: suas próprias músicas.</p>
+      <ul>
+        <li>Biblioteca MP3 com músicas, artistas e álbuns</li>
+        <li>Playlists locais, busca e arte de álbum</li>
+        <li>Controles de reprodução, shuffle e repeat</li>
+        <li>Compatível com uso completamente offline</li>
+      </ul>
+      <p><a href="./app/"><strong>📂 Ver código</strong></a> · <a href="https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml"><strong>⬇️ APK</strong></a></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./docs/showcase/home-classic.svg" width="270" alt="Prévia ilustrativa do YPod Home Classic com grade de ícones" />
+    </td>
+    <td valign="top">
+      <h3>📱 YPod Home Classic <code>v1.0</code></h3>
+      <p>Outra proposta de home, com grade de ícones, atalhos rápidos e aquela sensação de celular dos anos 2010.</p>
+      <ul>
+        <li>Launcher independente com grade e dock</li>
+        <li>Atalhos para apps do aparelho</li>
+        <li>Visual clássico com cores personalizáveis</li>
+      </ul>
+      <p><a href="./home/"><strong>📂 Ver código</strong></a> · <a href="https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml"><strong>⬇️ APK</strong></a></p>
+    </td>
+  </tr>
+</table>
 
-**Importante:** a cada nova compilação em runners GitHub Actions, a assinatura de depuração pode mudar. Se você já instalou outra compilação com o MESMO identificador, o Android poderá bloquear a atualização: será necessário criar uma distribuição com assinatura permanente para upgrades sem desinstalar. Esta edição usa o identificador separado `com.pocketbeat.ypodclassic` e não substitui as instalações anteriores.
+## 📦 Baixar e instalar
 
-## Limitações e verificação
+Os APKs são gerados automaticamente no **GitHub Actions**. Não é necessário instalar Android Studio ou compilar nada para testar no celular.
 
-A compilação no GitHub Actions comprova que o APK foi produzido, **não** que foi executado no aparelho. O player funciona enquanto a Activity permanecer ativa; não possui serviço de reprodução independente com notificação de segundo plano. Este é um player Android inspirado na estética de iPod, **não** uma cópia binária do iOS nem um firmware que substitui o Android. Ajustes finos devem ser validados no GT-S6102B real.
+| Aplicativo | Build | Arquivo a extrair do ZIP |
+| :--- | :--- | :--- |
+| YPod Mini Home 4.1 | [Baixar na página de builds](https://github.com/Yoshiizin/YPod/actions/workflows/mini-home-apk.yml) | `YPod-Mini-Home-Galaxy-Y.apk` |
+| Y-Dino 1.0 | [Baixar na página de builds](https://github.com/Yoshiizin/YPod/actions/workflows/mini-game-apk.yml) | `YPod-Y-Dino-Galaxy-Y.apk` |
+| YPod Music Classic 3.0 | [Baixar na página de builds](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) | `app-debug.apk` |
+| YPod Home Classic 1.0 | [Baixar na página de builds](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) | `home-debug.apk` |
+
+**Como instalar:** abra o build mais recente marcado como **Success** → em **Artifacts**, baixe o ZIP → **extraia o APK** → transfira para o Galaxy Y → ative **Configurações → Aplicativos → Fontes desconhecidas** → abra o APK pelo gerenciador de arquivos.
+
+Depois, para usar a Mini Home, pressione o botão físico **Home** e selecione **YPod Mini Home 4.1**. Segure o atalho **Music** para escolher seu player; o **Y-Dino** ficará disponível no menu de apps. Dependendo das permissões do GitHub, é necessário fazer login para baixar os Artifacts.
+
+> ⚠️ **Importante:** o ZIP baixado do Actions não é ROM, e **não deve ser instalado pelo Odin ou recovery**. Estes são aplicativos Android. Para instalar sem perder dados em atualizações futuras, é necessária uma **chave de assinatura privada e persistente**: os builds atuais podem usar chaves diferentes e exigir reinstalação. Desinstalar o Y-Dino apaga seu recorde local.
+
+## 🧰 Por dentro do projeto
+
+```text
+YPod/
+├── app/                # YPod Music Classic 3.0
+├── home/               # YPod Home Classic 1.0
+├── mini-home/          # YPod Mini Home Dynamic 4.1
+├── mini-game/          # Y-Dino 1.0
+├── docs/showcase/      # Capa e prévias ilustrativas
+└── .github/workflows/  # Compilação de todos os APKs
+```
+
+| Tecnologia | Escolha |
+| :--- | :--- |
+| Dispositivo-alvo | Samsung Galaxy Y Duos **GT-S6102B** |
+| Sistema-alvo | **Android 2.3.6 / API 10** |
+| Resolução de referência | **240 × 320**, modo retrato |
+| Linguagem | **Java** e Android SDK |
+| Mini Home e Y-Dino | Renderização por **Canvas** sem bibliotecas modernas |
+| Compilação | **GitHub Actions** (Gradle para os apps clássicos; build direto com SDK para Mini Home e jogo) |
+| Rede | **Não exigida** pelos aplicativos |
+
+### 🗓️ Histórico de versões
+
+| App | Atualização |
+| :--- | :--- |
+| Mini Home **v4.1** | Correção do toque de Music e áreas interativas separadas do relógio |
+| Mini Home **v4.0** | Relógio digital na home, com expansão ao toque |
+| Mini Home **v3.x** | Gestos, transições e controles leves |
+| Mini Home **v2.0** | Ícones desenhados em Canvas para evitar símbolos quebrados no Gingerbread |
+| Mini Home **v1.0** | Primeira home azul com atalhos |
+| Y-Dino **v1.0** | Corrida arcade, pontuação, recorde e áudio opcional |
+| Music Classic **v3.0** | Player local, navegação por biblioteca e playlists |
+| Home Classic **v1.0** | Launcher clássico independente |
+
+## 🧪 Status e limitações
+
+Os APKs têm **compilações aprovadas no GitHub Actions**, mas isso **não equivale a testes completos no dispositivo real**. Algumas funções, áudio e desempenho precisam ser verificados no Galaxy Y físico. A Mini Home **não substitui o Android** e nenhum ZIP deste repositório é uma ROM flashável.
+
+Para sugerir uma função ou relatar um bug, use [Issues](https://github.com/Yoshiizin/YPod/issues) e informe **modelo do aparelho, versão instalada, comportamento esperado e comportamento observado**. Se tiver uma captura real, anexe-a sem dados pessoais. Veja também [Como contribuir](./CONTRIBUTING.md).
+
+---
+
+<p align="center"><strong>Feito para caber em 240 × 320 — e ainda ter personalidade.</strong> ✨</p>
+<p align="center"><sub>YPod é um projeto independente de experimentação e nostalgia. Não possui vínculo com Apple, Samsung ou BALMUDA.</sub></p>

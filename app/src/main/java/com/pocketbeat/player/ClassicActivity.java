@@ -533,76 +533,109 @@ public class ClassicActivity extends Activity {
     private TextView action(String symbol,int size){
         TextView t=text(symbol,size,BLUE,true);t.setGravity(Gravity.CENTER);return t;
     }
+
     private void showPlayer(){
-        ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);body.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        LinearLayout page=column();page.setGravity(Gravity.CENTER_HORIZONTAL);padding(page,12,7);
-        scroll.addView(page);
-        int heightDp=(int)(getResources().getDisplayMetrics().heightPixels/getResources().getDisplayMetrics().density);
-        int coverSize=Math.max(82,Math.min(145,heightDp-242));
-        coverImage=new ImageView(this);coverImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        coverImage.setBackgroundDrawable(bordered(0xfff5f5f5,0xffc5c6cb,6,0xffa5a5a5));
-        LinearLayout.LayoutParams art=lp(coverSize,coverSize);art.gravity=Gravity.CENTER_HORIZONTAL;
-        art.bottomMargin=dp(8);page.addView(coverImage,art);
-        TextView placeholder=text("♫",66,0xffcacaca,true);placeholder.setGravity(Gravity.CENTER);
-        // ImageView receives either embedded album artwork or generated placeholder artwork.
-        if(current>=0&&current<songs.size()){
-            Bitmap bitmap=albumCover(songs.get(current).albumId);
-            if(bitmap!=null)coverImage.setImageBitmap(bitmap);
-            else{
-                android.graphics.Bitmap picture=Bitmap.createBitmap(128,128,Bitmap.Config.RGB_565);
-                android.graphics.Canvas canvas=new android.graphics.Canvas(picture);
-                canvas.drawColor(0xffe58b40);
-                android.graphics.Paint paint=new android.graphics.Paint(3);
-                paint.setColor(0xffffd99e);paint.setTextAlign(android.graphics.Paint.Align.CENTER);
-                paint.setTextSize(82);canvas.drawText("♫",64,89,paint);
-                coverImage.setImageBitmap(picture);
-            }
+        ScrollView scroller=new ScrollView(this);
+        scroller.setFillViewport(true);
+        scroller.setVerticalScrollBarEnabled(false);
+        body.addView(scroller,new LinearLayout.LayoutParams(-1,0,1));
+        LinearLayout page=column();
+        page.setGravity(Gravity.CENTER_HORIZONTAL);
+        padding(page,18,5);
+        scroller.addView(page);
+        TextView kicker=text("A SUA MÚSICA, DO SEU JEITO",10,BLUE,true);
+        kicker.setGravity(Gravity.CENTER);
+        page.addView(kicker,lp(-1,22));
+        int heightDp=(int)(getResources().getDisplayMetrics().heightPixels/
+            getResources().getDisplayMetrics().density);
+        int coverSize=Math.max(116,Math.min(178,heightDp-315));
+        coverImage=new ImageView(this);
+        coverImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        coverImage.setBackgroundDrawable(gradient(0xff6b3767,0xff26253c,17));
+        LinearLayout.LayoutParams artwork=lp(coverSize,coverSize);
+        artwork.gravity=Gravity.CENTER_HORIZONTAL;
+        artwork.topMargin=dp(2);
+        artwork.bottomMargin=dp(12);
+        page.addView(coverImage,artwork);
+
+        Song song=current>=0&&current<songs.size()?songs.get(current):null;
+        Bitmap bitmap=song==null?null:albumCover(song.albumId);
+        if(bitmap!=null)coverImage.setImageBitmap(bitmap);
+        else {
+            Bitmap picture=Bitmap.createBitmap(144,144,Bitmap.Config.RGB_565);
+            android.graphics.Canvas canvas=new android.graphics.Canvas(picture);
+            android.graphics.Paint paint=new android.graphics.Paint(3);
+            paint.setShader(new android.graphics.LinearGradient(0,0,144,144,
+                0xffc34889,0xff392b6c,android.graphics.Shader.TileMode.CLAMP));
+            canvas.drawRect(0,0,144,144,paint);paint.setShader(null);
+            paint.setColor(0xfff9d7ed);paint.setTextSize(88);
+            paint.setTextAlign(android.graphics.Paint.Align.CENTER);
+            canvas.drawText("♫",72,100,paint);coverImage.setImageBitmap(picture);
         }
-        Song playing=current>=0&&current<songs.size()?songs.get(current):null;
-        TextView songName=text(playing==null?"Nenhuma música":playing.title,16,INK,true);
-        songName.setGravity(Gravity.CENTER);page.addView(songName,lp(-1,24));
-        TextView artistName=text(playing==null?"Selecione uma música":playing.artist,12,SUB,false);
-        artistName.setGravity(Gravity.CENTER);page.addView(artistName,lp(-1,21));
-        progress=new SeekBar(this);progress.setMax(1000);page.addView(progress,lp(-1,31));
+        TextView songName=text(song==null?"Sua próxima música":song.title,19,INK,true);
+        songName.setGravity(Gravity.CENTER);page.addView(songName,lp(-1,27));
+        TextView artistName=text(song==null?"Escolha uma faixa na biblioteca":song.artist,12,SUB,false);
+        artistName.setGravity(Gravity.CENTER);page.addView(artistName,lp(-1,22));
+
+        progress=new SeekBar(this);progress.setMax(1000);
+        if(progress.getProgressDrawable()!=null)
+            progress.getProgressDrawable().setColorFilter(BLUE,android.graphics.PorterDuff.Mode.SRC_IN);
+        page.addView(progress,lp(-1,36));
         progress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             public void onStartTrackingTouch(SeekBar s){touchingSeek=true;}
             public void onStopTrackingTouch(SeekBar s){
-                if(media!=null)try{media.seekTo((int)((long)media.getDuration()*s.getProgress()/1000));}
-                    catch(Exception e){}
+                if(media!=null)try{
+                    media.seekTo((int)((long)media.getDuration()*s.getProgress()/1000));
+                }catch(Exception ignored){}
                 touchingSeek=false;
             }
-            public void onProgressChanged(SeekBar s,int value,boolean user){}
+            public void onProgressChanged(SeekBar s,int p,boolean user){}
         });
-        LinearLayout times=row();timeAt=text("0:00",11,SUB,false);timeLeft=text("-0:00",11,SUB,false);
-        times.addView(timeAt,new LinearLayout.LayoutParams(0,dp(18),1));
-        timeLeft.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);times.addView(timeLeft);
-        page.addView(times,lp(-1,18));
+        LinearLayout times=row();timeAt=text("0:00",10,SUB,false);
+        timeLeft=text("-0:00",10,SUB,false);
+        times.addView(timeAt,new LinearLayout.LayoutParams(0,dp(16),1));
+        timeLeft.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+        times.addView(timeLeft);page.addView(times,lp(-1,17));
+
         LinearLayout controls=row();controls.setGravity(Gravity.CENTER);
-        TextView previous=action("◀◀",23),play=action("▶",32),forward=action("▶▶",23);
+        TextView previous=action("◀◀",24),play=action("▶",29),forward=action("▶▶",24);
         mainPlay=play;play.setText(media!=null&&media.isPlaying()?"Ⅱ":"▶");
-        controls.addView(previous,new LinearLayout.LayoutParams(0,dp(46),1));
-        controls.addView(play,new LinearLayout.LayoutParams(0,dp(46),1));
-        controls.addView(forward,new LinearLayout.LayoutParams(0,dp(46),1));
-        body.addView(controls,lp(-1,46));
+        previous.setTextColor(INK);forward.setTextColor(INK);
+        play.setTextColor(WHITE);play.setBackgroundDrawable(gradient(0xffff6f91,0xffd53670,60));
+        controls.addView(previous,new LinearLayout.LayoutParams(0,dp(63),1));
+        LinearLayout.LayoutParams playParams=lp(60,60);
+        playParams.leftMargin=dp(8);playParams.rightMargin=dp(8);
+        controls.addView(play,playParams);
+        controls.addView(forward,new LinearLayout.LayoutParams(0,dp(63),1));
+        page.addView(controls,lp(-1,66));
         previous.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(-1,true);}});
         play.setOnClickListener(new View.OnClickListener(){public void onClick(View v){toggle();}});
         forward.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(1,true);}});
+
         LinearLayout options=row();options.setGravity(Gravity.CENTER);
-        shuffleButton=action(shuffle?"Misturar: ON":"Misturar: OFF",11);
-        repeatButton=action(repeat==0?"Repetir: OFF":repeat==1?"Repetir: TUDO":"Repetir: 1",11);
-        options.addView(shuffleButton,new LinearLayout.LayoutParams(0,dp(35),1));
-        options.addView(repeatButton,new LinearLayout.LayoutParams(0,dp(35),1));
-        body.addView(options,lp(-1,32));
+        shuffleButton=action(shuffle?"⇄  ALEATÓRIO ✓":"⇄  ALEATÓRIO",11);
+        repeatButton=action(repeat==0?"↻  REPETIR":repeat==1?"↻  TODOS ✓":"↻  UMA ✓",11);
+        shuffleButton.setTextColor(shuffle?BLUE:SUB);
+        repeatButton.setTextColor(repeat==0?SUB:BLUE);
+        options.addView(shuffleButton,new LinearLayout.LayoutParams(0,dp(37),1));
+        options.addView(repeatButton,new LinearLayout.LayoutParams(0,dp(37),1));
+        page.addView(options,lp(-1,37));
         shuffleButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){
             shuffle=!shuffle;getPreferences(0).edit().putBoolean("shuffle",shuffle).commit();
-            shuffleButton.setText(shuffle?"Misturar: ON":"Misturar: OFF");
+            shuffleButton.setText(shuffle?"⇄  ALEATÓRIO ✓":"⇄  ALEATÓRIO");
+            shuffleButton.setTextColor(shuffle?BLUE:SUB);
         }});
         repeatButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){
             repeat=(repeat+1)%3;getPreferences(0).edit().putInt("repeat",repeat).commit();
-            repeatButton.setText(repeat==0?"Repetir: OFF":repeat==1?"Repetir: TUDO":"Repetir: 1");
+            repeatButton.setText(repeat==0?"↻  REPETIR":repeat==1?"↻  TODOS ✓":"↻  UMA ✓");
+            repeatButton.setTextColor(repeat==0?SUB:BLUE);
         }});
-        if(playing!=null){
-            TextView add=action("＋  Adicionar à playlist",12);body.addView(add,lp(-1,28));
+        if(song!=null){
+            TextView add=action("＋   ADICIONAR À PLAYLIST",11);
+            add.setTextColor(INK);
+            add.setBackgroundDrawable(bordered(0xff36303e,0xff23212c,12,0xff504355));
+            add.setGravity(Gravity.CENTER);
+            page.addView(add,lp(-1,35));
             add.setOnClickListener(new View.OnClickListener(){public void onClick(View v){choosePlaylist(current);}});
         }
     }

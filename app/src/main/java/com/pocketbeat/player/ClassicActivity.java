@@ -65,8 +65,10 @@ public class ClassicActivity extends Activity {
     };
     private final BroadcastReceiver unplugReceiver=new BroadcastReceiver(){
         public void onReceive(Context c,Intent i){
-            if(AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(i.getAction())&&media!=null)
-                try{if(media.isPlaying())media.pause();}catch(Exception ignored){}
+            if(AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(i.getAction())){
+                PlaybackService service=PlaybackService.instance;
+                if(service!=null)service.pause();
+            }
             updateButtons();
         }
     };
@@ -78,6 +80,7 @@ public class ClassicActivity extends Activity {
     private String detailName="", detailType="";
     private Bitmap cachedCover;
     private long cachedAlbum=-1;
+    private int knownGeneration=-1;
 
     private static class Song {
         String title, artist, album, path;
@@ -112,7 +115,8 @@ public class ClassicActivity extends Activity {
         registerReceiver(unplugReceiver,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         shuffle=getPreferences(0).getBoolean("shuffle",false);
         repeat=getPreferences(0).getInt("repeat",0);
-        scan();render();handler.post(ticker);
+        startService(new Intent(this,PlaybackService.class));
+        scan();syncPlayback(false);render();handler.post(ticker);
     }
     private void scan(){
         songs.clear();Cursor c=null;
@@ -132,6 +136,25 @@ public class ClassicActivity extends Activity {
     }
     private String safe(String s,String fallback){
         return s==null||s.trim().length()==0||s.equals("<unknown>")?fallback:s;
+    }
+
+    private void syncPlayback(boolean redraw) {
+        PlaybackService service=PlaybackService.instance;
+        if(service==null)return;
+        media=service.media;
+        if(service.currentPath==null)return;
+        int found=-1;
+        for(int i=0;i<songs.size();i++)
+            if(songs.get(i).path.equals(service.currentPath)){found=i;break;}
+        boolean changed=found>=0&&found!=current;
+        if(found>=0)current=found;
+        knownGeneration=service.generation;
+        if(changed&&redraw&&screen==PLAYER)render();
+        else if(changed)updateButtons();
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        syncPlayback(true);
     }
     private void render(){
         miniTitle=null;miniButton=null;mainPlay=null;timeAt=null;timeLeft=null;progress=null;coverImage=null;
@@ -467,52 +490,47 @@ public class ClassicActivity extends Activity {
         queue.clear();queue.addAll(selected);queuePosition=position;startSong(queue.get(queuePosition));
         playerBack=screen;screen=PLAYER;render();
     }
-    private void startSong(int id){
+
+    private void startSong(final int id){
         if(id<0||id>=songs.size())return;
-        current=id;
-        if(media!=null){try{media.reset();media.release();}catch(Exception e){}media=null;}
-        try{
-            if(audioManager!=null)audioManager.requestAudioFocus(audioFocus,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
-            media=new MediaPlayer();media.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            media.setWakeMode(getApplicationContext(),PowerManager.PARTIAL_WAKE_LOCK);
-            media.setDataSource(songs.get(current).path);
-            media.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
-                public void onCompletion(MediaPlayer p){next(1,false);}
-            });
-            media.prepare();media.start();
-        }catch(Exception e){
-            if(media!=null){try{media.release();}catch(Exception ignored){}media=null;}
-            Toast.makeText(this,"Não foi possível tocar este arquivo",Toast.LENGTH_LONG).show();
+        PlaybackService service=PlaybackService.instance;
+        if(service==null){
+            startService(new Intent(this,PlaybackService.class));
+            handler.postDelayed(new Runnable(){public void run(){startSong(id);}},160);
+            return;
         }
+        current=id;
+        if(queue.isEmpty()){for(int i=0;i<songs.size();i++)queue.add(i);queuePosition=id;}
+        String[] paths=new String[queue.size()];
+        for(int i=0;i<queue.size();i++)paths[i]=songs.get(queue.get(i)).path;
+        service.shuffle=shuffle;service.repeat=repeat;
+        service.play(paths,Math.max(0,Math.min(queuePosition,paths.length-1)));
+        media=service.media;
+        knownGeneration=service.generation;
+        if(media==null)Toast.makeText(this,"Arquivo não pôde ser reproduzido",Toast.LENGTH_LONG).show();
         updateButtons();
     }
     private void toggle(){
-        if(media==null){if(!songs.isEmpty()){
-            ArrayList<Integer> all=new ArrayList<Integer>();for(int i=0;i<songs.size();i++)all.add(i);
-            queue.clear();queue.addAll(all);queuePosition=current<0?0:current;startSong(queue.get(queuePosition));
-        }return;}
-        try{if(media.isPlaying())media.pause();else media.start();}catch(Exception e){}
-        updateButtons();
+        PlaybackService service=PlaybackService.instance;
+        if(service==null){startService(new Intent(this,PlaybackService.class));return;}
+        media=service.media;
+        if(media==null){
+            if(songs.isEmpty())return;
+            queue.clear();
+            for(int i=0;i<songs.size();i++)queue.add(i);
+            queuePosition=Math.max(0,current);
+            startSong(queue.get(queuePosition));
+            return;
+        }
+        service.toggle();media=service.media;updateButtons();
     }
     private void next(int direction,boolean manual){
-        if(queue.isEmpty()){if(songs.isEmpty())return;
-            for(int i=0;i<songs.size();i++)queue.add(i);queuePosition=Math.max(0,current);
-        }
-        if(!manual&&repeat==2&&media!=null){
-            try{media.seekTo(0);media.start();}catch(Exception e){}return;
-        }
-        if(shuffle&&direction>0&&queue.size()>1){
-            int next=random.nextInt(queue.size());if(next==queuePosition)next=(next+1)%queue.size();
-            queuePosition=next;
-        }else{
-            int next=queuePosition+direction;
-            if(next<0||next>=queue.size()){
-                if(!manual&&repeat==0){if(media!=null)try{media.pause();media.seekTo(0);}catch(Exception e){}updateButtons();return;}
-                next=(next+queue.size())%queue.size();
-            }
-            queuePosition=next;
-        }
-        startSong(queue.get(queuePosition));
+        PlaybackService service=PlaybackService.instance;
+        if(service==null)return;
+        service.shuffle=shuffle;service.repeat=repeat;
+        service.advance(direction,manual);
+        media=service.media;
+        syncPlayback(false);
         if(screen==PLAYER)render();else updateButtons();
     }
     private Bitmap albumCover(long albumId){
@@ -522,8 +540,9 @@ public class ClassicActivity extends Activity {
         try{
             Uri uri=Uri.parse("content://media/external/audio/albumart/"+albumId);
             in=getContentResolver().openInputStream(uri);
-            if(in!=null){BitmapFactory.Options opts=new BitmapFactory.Options();opts.inSampleSize=4;
-                opts.inPreferredConfig=Bitmap.Config.RGB_565;
+            if(in!=null){
+                BitmapFactory.Options opts=new BitmapFactory.Options();
+                opts.inSampleSize=4;opts.inPreferredConfig=Bitmap.Config.RGB_565;
                 cachedCover=BitmapFactory.decodeStream(in,null,opts);
             }
         }catch(Exception e){}catch(OutOfMemoryError e){cachedCover=null;}
@@ -533,31 +552,22 @@ public class ClassicActivity extends Activity {
     private TextView action(String symbol,int size){
         TextView t=text(symbol,size,BLUE,true);t.setGravity(Gravity.CENTER);return t;
     }
-
     private void showPlayer(){
         ScrollView scroller=new ScrollView(this);
-        scroller.setFillViewport(true);
-        scroller.setVerticalScrollBarEnabled(false);
+        scroller.setFillViewport(true);scroller.setVerticalScrollBarEnabled(false);
         body.addView(scroller,new LinearLayout.LayoutParams(-1,0,1));
-        LinearLayout page=column();
-        page.setGravity(Gravity.CENTER_HORIZONTAL);
-        padding(page,18,5);
+        LinearLayout page=column();page.setGravity(Gravity.CENTER_HORIZONTAL);padding(page,18,5);
         scroller.addView(page);
         TextView kicker=text("A SUA MÚSICA, DO SEU JEITO",10,BLUE,true);
-        kicker.setGravity(Gravity.CENTER);
-        page.addView(kicker,lp(-1,22));
+        kicker.setGravity(Gravity.CENTER);page.addView(kicker,lp(-1,22));
         int heightDp=(int)(getResources().getDisplayMetrics().heightPixels/
             getResources().getDisplayMetrics().density);
         int coverSize=Math.max(116,Math.min(178,heightDp-315));
-        coverImage=new ImageView(this);
-        coverImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        coverImage=new ImageView(this);coverImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         coverImage.setBackgroundDrawable(gradient(0xff6b3767,0xff26253c,17));
         LinearLayout.LayoutParams artwork=lp(coverSize,coverSize);
-        artwork.gravity=Gravity.CENTER_HORIZONTAL;
-        artwork.topMargin=dp(2);
-        artwork.bottomMargin=dp(12);
+        artwork.gravity=Gravity.CENTER_HORIZONTAL;artwork.topMargin=dp(2);artwork.bottomMargin=dp(12);
         page.addView(coverImage,artwork);
-
         Song song=current>=0&&current<songs.size()?songs.get(current):null;
         Bitmap bitmap=song==null?null:albumCover(song.albumId);
         if(bitmap!=null)coverImage.setImageBitmap(bitmap);
@@ -576,7 +586,6 @@ public class ClassicActivity extends Activity {
         songName.setGravity(Gravity.CENTER);page.addView(songName,lp(-1,27));
         TextView artistName=text(song==null?"Escolha uma faixa na biblioteca":song.artist,12,SUB,false);
         artistName.setGravity(Gravity.CENTER);page.addView(artistName,lp(-1,22));
-
         progress=new SeekBar(this);progress.setMax(1000);
         if(progress.getProgressDrawable()!=null)
             progress.getProgressDrawable().setColorFilter(BLUE,android.graphics.PorterDuff.Mode.SRC_IN);
@@ -594,9 +603,8 @@ public class ClassicActivity extends Activity {
         LinearLayout times=row();timeAt=text("0:00",10,SUB,false);
         timeLeft=text("-0:00",10,SUB,false);
         times.addView(timeAt,new LinearLayout.LayoutParams(0,dp(16),1));
-        timeLeft.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-        times.addView(timeLeft);page.addView(times,lp(-1,17));
-
+        timeLeft.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);times.addView(timeLeft);
+        page.addView(times,lp(-1,17));
         LinearLayout controls=row();controls.setGravity(Gravity.CENTER);
         TextView previous=action("◀◀",24),play=action("▶",29),forward=action("▶▶",24);
         mainPlay=play;play.setText(media!=null&&media.isPlaying()?"Ⅱ":"▶");
@@ -604,29 +612,28 @@ public class ClassicActivity extends Activity {
         play.setTextColor(WHITE);play.setBackgroundDrawable(gradient(0xffff6f91,0xffd53670,60));
         controls.addView(previous,new LinearLayout.LayoutParams(0,dp(63),1));
         LinearLayout.LayoutParams playParams=lp(60,60);
-        playParams.leftMargin=dp(8);playParams.rightMargin=dp(8);
-        controls.addView(play,playParams);
+        playParams.leftMargin=dp(8);playParams.rightMargin=dp(8);controls.addView(play,playParams);
         controls.addView(forward,new LinearLayout.LayoutParams(0,dp(63),1));
         page.addView(controls,lp(-1,66));
         previous.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(-1,true);}});
         play.setOnClickListener(new View.OnClickListener(){public void onClick(View v){toggle();}});
         forward.setOnClickListener(new View.OnClickListener(){public void onClick(View v){next(1,true);}});
-
         LinearLayout options=row();options.setGravity(Gravity.CENTER);
         shuffleButton=action(shuffle?"⇄  ALEATÓRIO ✓":"⇄  ALEATÓRIO",11);
         repeatButton=action(repeat==0?"↻  REPETIR":repeat==1?"↻  TODOS ✓":"↻  UMA ✓",11);
-        shuffleButton.setTextColor(shuffle?BLUE:SUB);
-        repeatButton.setTextColor(repeat==0?SUB:BLUE);
+        shuffleButton.setTextColor(shuffle?BLUE:SUB);repeatButton.setTextColor(repeat==0?SUB:BLUE);
         options.addView(shuffleButton,new LinearLayout.LayoutParams(0,dp(37),1));
         options.addView(repeatButton,new LinearLayout.LayoutParams(0,dp(37),1));
         page.addView(options,lp(-1,37));
         shuffleButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){
             shuffle=!shuffle;getPreferences(0).edit().putBoolean("shuffle",shuffle).commit();
+            PlaybackService svc=PlaybackService.instance;if(svc!=null)svc.shuffle=shuffle;
             shuffleButton.setText(shuffle?"⇄  ALEATÓRIO ✓":"⇄  ALEATÓRIO");
             shuffleButton.setTextColor(shuffle?BLUE:SUB);
         }});
         repeatButton.setOnClickListener(new View.OnClickListener(){public void onClick(View v){
             repeat=(repeat+1)%3;getPreferences(0).edit().putInt("repeat",repeat).commit();
+            PlaybackService svc=PlaybackService.instance;if(svc!=null)svc.repeat=repeat;
             repeatButton.setText(repeat==0?"↻  REPETIR":repeat==1?"↻  TODOS ✓":"↻  UMA ✓");
             repeatButton.setTextColor(repeat==0?SUB:BLUE);
         }});
@@ -634,8 +641,7 @@ public class ClassicActivity extends Activity {
             TextView add=action("＋   ADICIONAR À PLAYLIST",11);
             add.setTextColor(INK);
             add.setBackgroundDrawable(bordered(0xff36303e,0xff23212c,12,0xff504355));
-            add.setGravity(Gravity.CENTER);
-            page.addView(add,lp(-1,35));
+            add.setGravity(Gravity.CENTER);page.addView(add,lp(-1,35));
             add.setOnClickListener(new View.OnClickListener(){public void onClick(View v){choosePlaylist(current);}});
         }
     }
@@ -663,11 +669,13 @@ public class ClassicActivity extends Activity {
         if(miniButton!=null)miniButton.setText(playing?"Ⅱ":"▶");
         if(miniTitle!=null&&current>=0&&current<songs.size())miniTitle.setText(songs.get(current).title);
     }
+
     private String duration(int ms){
         int sec=Math.max(0,ms/1000);return (sec/60)+":"+String.format(Locale.US,"%02d",sec%60);
     }
     private final Runnable ticker=new Runnable(){
         public void run(){
+            syncPlayback(true);
             if(media!=null&&progress!=null&&progress.getParent()!=null){
                 try{
                     int total=media.getDuration(),where=media.getCurrentPosition();
@@ -682,7 +690,12 @@ public class ClassicActivity extends Activity {
     private void confirmExit(){
         new AlertDialog.Builder(this).setTitle("Sair do YPod?")
             .setMessage("A reprodução será interrompida.").setPositiveButton("Sair",
-                new DialogInterface.OnClickListener(){public void onClick(DialogInterface d,int w){finish();}})
+                new DialogInterface.OnClickListener(){public void onClick(DialogInterface d,int w){
+                    PlaybackService service=PlaybackService.instance;
+                    if(service!=null)service.stopPlayback();
+                    stopService(new Intent(ClassicActivity.this,PlaybackService.class));
+                    finish();
+                }})
             .setNegativeButton("Cancelar",null).show();
     }
     @Override public void onBackPressed(){
@@ -695,8 +708,7 @@ public class ClassicActivity extends Activity {
     @Override protected void onDestroy(){
         handler.removeCallbacks(ticker);
         try{unregisterReceiver(unplugReceiver);}catch(Exception ignored){}
-        if(audioManager!=null)audioManager.abandonAudioFocus(audioFocus);
-        if(media!=null){try{media.release();}catch(Exception ignored){}media=null;}
+        media=null;
         super.onDestroy();
     }
 }

@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.pocketbeat.home'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.pocketbeat.ypodhome'
+        minSdk 10
+        targetSdk 22
+        versionCode 1
+        versionName '1.0-classic'
+    }
+}

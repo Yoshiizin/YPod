@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ypod.minihome.dynamic" android:versionCode="31" android:versionName="3.1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ypod.minihome.clock" android:versionCode="40" android:versionName="4.0">
   <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10"/>
-  <application android:label="YPod Mini Home Dynamic" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:allowBackup="false">
+  <application android:label="YPod Mini Home Clock" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:allowBackup="false">
     <activity android:name="com.ypod.minihome.MiniActivity" android:launchMode="singleTask" android:screenOrientation="portrait" android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

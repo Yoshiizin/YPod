@@ -452,7 +452,7 @@ public final class HomeActivity extends Activity {
         private final String type;
         private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint line=new Paint(Paint.ANTI_ALIAS_FLAG);
-        ShortcutIcon(Context context,String kind){super(context);type=kind;setLayerType(View.LAYER_TYPE_SOFTWARE,null);}
+        ShortcutIcon(Context context,String kind){super(context);type=kind;}
         private void stroke(int color,float width){
             line.setColor(color);line.setStyle(Paint.Style.STROKE);line.setStrokeWidth(width);
             line.setStrokeJoin(Paint.Join.ROUND);line.setStrokeCap(Paint.Cap.ROUND);

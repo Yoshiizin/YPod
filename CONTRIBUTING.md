@@ -26,4 +26,4 @@ Os arquivos SVG em `docs/showcase/` são **prévias ilustrativas**. Capturas rea
 
 ## Licenciamento
 
-O repositório é público, mas isso não significa automaticamente que o conteúdo tenha uma licença de reutilização. Antes de redistribuir partes ou publicar um fork sob uma licença, verifique os direitos aplicáveis e a licença que o mantenedor decidir adotar.
+O código original deste repositório é disponibilizado sob a [Licença MIT](./LICENSE). Preserve os avisos de copyright e licença, respeite os termos das dependências e confira os [avisos sobre terceiros](./THIRD_PARTY_NOTICES.md) antes de redistribuir imagens, sons ou componentes externos.

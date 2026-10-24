@@ -159,6 +159,12 @@ YPod/
 | Music Classic **v3.0** | Player local, navegação por biblioteca e playlists |
 | Home Classic **v1.0** | Launcher clássico independente |
 
+## ⚖️ Licença e direitos
+
+O código original é distribuído sob a **[Licença MIT](./LICENSE)**. Ela permite usar, modificar e redistribuir o código mediante preservação do aviso de copyright e licença, inclusive em projetos comerciais. O uso de **marcas de terceiros, logos, firmwares Samsung, conteúdo de usuários e componentes com outras licenças** não é autorizado por esta licença. Leia os [avisos sobre terceiros](./THIRD_PARTY_NOTICES.md).
+
+A licença **não garante imunidade a processos**. Antes de distribuir uma ROM, som ou arte de origem externa, é necessário verificar sua autorização.
+
 ## 🧪 Status e limitações
 
 Os APKs têm **compilações aprovadas no GitHub Actions**, mas isso **não equivale a testes completos no dispositivo real**. Algumas funções, áudio e desempenho precisam ser verificados no Galaxy Y físico. A Mini Home **não substitui o Android** e nenhum ZIP deste repositório é uma ROM flashável.

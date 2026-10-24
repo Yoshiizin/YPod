@@ -1,3 +1,30 @@
+# YPod Midnight 4.0 — música offline para Galaxy Y Duos
+
+Edição feita para **Samsung Galaxy Y Duos GT-S6102B (Android 2.3 / API 10)**. 
+Player leve, nativo em Java, sem login, publicidade, assinatura ou conexão de internet.
+
+## O que já funciona
+
+- Interface escura com detalhes rosa, estilo iPod/Apple Music; capas de álbum e mini-player.
+- Reprodução local de MP3 e formatos suportados pelo Android 2.3; busca por música, artista e álbum.
+- Play, pause, próxima, anterior, barra de progresso, aleatório e repetição.
+- Playlists locais: criar, adicionar e remover músicas.
+- Motor de áudio em serviço de primeiro plano para continuar tocando com tela bloqueada ou fora do aplicativo.
+- Pausa automática ao desconectar o fone e ao perder foco de áudio.
+- Separação de identidade do pacote (`com.pocketbeat.ypodmidnight`) para evitar conflito com APKs antigos.
+
+## Instalar no Galaxy Y
+
+1. Vá a [Actions → Build YPod APK](https://github.com/Yoshiizin/YPod/actions/workflows/build-apk.yml) e abra a **última execução com sucesso**.
+2. No final da execução, baixe o artefato **YPod-Midnight-APK** e descompacte o ZIP.
+3. Copie `app-debug.apk` para o celular e abra pelo gerenciador de arquivos.
+4. No Android 2.3, habilite temporariamente **Configurações → Aplicativos → Fontes desconhecidas** para instalar o APK.
+5. Coloque suas músicas em **Music** no cartão SD, aguarde o Android indexá-las e, no YPod, abra **Ajustes → Atualizar músicas**.
+
+**Importante:** o APK é assinado para testes pelo GitHub Actions; builds diferentes podem receber certificados diferentes, então novas versões podem exigir desinstalar a anterior antes de instalar. Para distribuição contínua, configure uma chave privada de assinatura estável em GitHub Secrets. O código não contém chaves de assinatura privadas.
+
+---
+
 <p align="center">
   <img src="./docs/showcase/hero.svg" width="100%" alt="YPod Retro Collection — capa ilustrativa com o player, a Mini Home azul e o Y-Dino" />
 </p>

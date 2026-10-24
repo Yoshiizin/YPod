@@ -3,13 +3,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
-        android:label="YPod Music"
+        android:label="YPod Midnight"
         android:icon="@drawable/ypod_icon"
         android:theme="@android:style/Theme.NoTitleBar"
-        android:allowBackup="true">
+        android:allowBackup="false">
         <activity
             android:name="com.pocketbeat.player.ClassicActivity"
-            android:label="YPod Music"
+            android:label="YPod Midnight"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

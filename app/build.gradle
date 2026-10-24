@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.pocketbeat.player'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.pocketbeat.player'
+        minSdk 10
+        targetSdk 28
+        versionCode 3
+        versionName '0.3'
+    }
+}
